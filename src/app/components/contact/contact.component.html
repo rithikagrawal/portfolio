@@ -1,0 +1,208 @@
+<section id="contact" class="section contact-section">
+  <div class="container">
+    <!-- Header -->
+    <div class="section-header reveal">
+      <p class="section-label">Get In Touch</p>
+      <h2 class="section-title">Let's Work Together</h2>
+      <p class="section-desc">
+        Whether you have a project in mind, a job opportunity, or just want to say hello —
+        my inbox is always open. I'll do my best to respond within 24 hours.
+      </p>
+    </div>
+
+    <div class="contact-layout">
+      <!-- Left: Contact info -->
+      <div class="contact-info reveal-left">
+        <h3 class="info-title">Let's Build Something Amazing</h3>
+        <p class="info-desc">
+          I'm currently available for freelance work and full-time positions.
+          If you have a project that needs a skilled developer or want to discuss
+          opportunities, let's connect.
+        </p>
+
+        <div class="contact-details">
+          @for (detail of contactDetails; track detail.label) {
+            <div class="contact-detail">
+              <div class="detail-icon">
+                <i [class]="detail.icon"></i>
+              </div>
+              <div class="detail-content">
+                <span class="detail-label mono">{{ detail.label }}</span>
+                @if (detail.link) {
+                  <a [href]="detail.link" target="_blank" class="detail-value">
+                    {{ detail.value }}
+                  </a>
+                } @else {
+                  <span class="detail-value">{{ detail.value }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Social Links -->
+        <div class="social-section">
+          <p class="social-label mono">Connect with me:</p>
+          <div class="social-grid">
+            @for (social of socialLinks; track social.name) {
+              <a [href]="social.url" target="_blank" class="social-card glass">
+                <i [class]="social.icon"></i>
+                <span>{{ social.name }}</span>
+              </a>
+            }
+          </div>
+        </div>
+
+        <!-- Availability indicator -->
+        <div class="availability glass">
+          <div class="avail-indicator">
+            <span class="dot-pulse-green"></span>
+          </div>
+          <div>
+            <div class="avail-title">Currently Available</div>
+            <div class="avail-sub mono">Open to full-time & freelance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Contact form -->
+      <div class="contact-form-col reveal-right">
+        @if (submitSuccess) {
+          <div class="success-state glass">
+            <div class="success-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Message Sent!</h3>
+            <p>Thanks for reaching out. I'll get back to you within 24 hours.</p>
+            <button class="btn-outline" (click)="resetForm()">
+              Send Another Message
+            </button>
+          </div>
+        } @else {
+          <form class="contact-form glass" #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)" novalidate>
+            <div class="form-header">
+              <h3 class="form-title">Send Me a Message</h3>
+              <p class="form-subtitle mono">* Required fields</p>
+            </div>
+
+            <!-- Name & Email row -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name" class="form-label mono">Name *</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  class="form-input"
+                  placeholder="Your name"
+                  [(ngModel)]="formData.name"
+                  required
+                  #nameField="ngModel"
+                  [class.error]="nameField.invalid && nameField.touched">
+                @if (nameField.invalid && nameField.touched) {
+                  <span class="error-msg">Name is required</span>
+                }
+              </div>
+              <div class="form-group">
+                <label for="email" class="form-label mono">Email *</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  class="form-input"
+                  placeholder="your@email.com"
+                  [(ngModel)]="formData.email"
+                  required
+                  email
+                  #emailField="ngModel"
+                  [class.error]="emailField.invalid && emailField.touched">
+                @if (emailField.invalid && emailField.touched) {
+                  <span class="error-msg">Valid email is required</span>
+                }
+              </div>
+            </div>
+
+            <!-- Subject -->
+            <div class="form-group">
+              <label for="subject" class="form-label mono">Subject *</label>
+              <input
+                id="subject"
+                name="subject"
+                type="text"
+                class="form-input"
+                placeholder="What's this about?"
+                [(ngModel)]="formData.subject"
+                required
+                #subjectField="ngModel"
+                [class.error]="subjectField.invalid && subjectField.touched">
+            </div>
+
+            <!-- Budget & Timeline -->
+            <div class="form-row">
+              <div class="form-group">
+                <label for="budget" class="form-label mono">Budget (optional)</label>
+                <select id="budget" name="budget" class="form-input form-select" [(ngModel)]="formData.budget">
+                  <option value="">Select budget range</option>
+                  @for (opt of budgetOptions; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="timeline" class="form-label mono">Timeline (optional)</label>
+                <select id="timeline" name="timeline" class="form-input form-select" [(ngModel)]="formData.timeline">
+                  <option value="">Select timeline</option>
+                  @for (opt of timelineOptions; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <!-- Message -->
+            <div class="form-group">
+              <label for="message" class="form-label mono">Message *</label>
+              <textarea
+                id="message"
+                name="message"
+                class="form-input form-textarea"
+                placeholder="Tell me about your project, idea, or opportunity..."
+                rows="5"
+                [(ngModel)]="formData.message"
+                required
+                #messageField="ngModel"
+                [class.error]="messageField.invalid && messageField.touched"></textarea>
+              @if (messageField.invalid && messageField.touched) {
+                <span class="error-msg">Message is required</span>
+              }
+            </div>
+
+            <!-- Error -->
+            @if (submitError) {
+              <div class="error-banner">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ errorMessage }}
+              </div>
+            }
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="btn-primary submit-btn"
+              [disabled]="isSubmitting || contactForm.invalid">
+              @if (isSubmitting) {
+                <span class="loading-dots">
+                  <span></span><span></span><span></span>
+                </span>
+                Sending...
+              } @else {
+                <i class="fas fa-paper-plane"></i>
+                Send Message
+              }
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+</section>

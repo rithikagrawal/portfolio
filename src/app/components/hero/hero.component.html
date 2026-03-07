@@ -1,0 +1,133 @@
+<section id="hero" class="hero-section">
+  <!-- Animated grid background -->
+  <div class="hero-grid"></div>
+
+  <!-- Glowing orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="container">
+    <div class="hero-content">
+      <!-- Pre-title -->
+      <div class="hero-pretitle animate-fade-in">
+        <span class="mono status-dot">
+          <span class="dot-pulse"></span>
+          Available for opportunities
+        </span>
+      </div>
+
+      <!-- Main title -->
+      <h1 class="hero-title animate-slide-up">
+        Hi, I'm <span class="name-highlight">Rithik Agrawal</span>
+      </h1>
+
+      <!-- Typewriter -->
+      <div class="hero-role animate-slide-up delay-1">
+        <span class="role-prefix mono">const role = </span>
+        <span class="role-text mono">"{{ displayText }}<span class="cursor-blink">|</span>"</span>
+      </div>
+
+      <!-- Description -->
+      <p class="hero-description animate-slide-up delay-2">
+        I craft <span class="highlight">scalable backend systems</span>,
+        <span class="highlight">beautiful interfaces</span>, and
+        <span class="highlight">intelligent data pipelines</span> that
+        power products used by millions.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="hero-ctas animate-slide-up delay-3">
+        <button class="btn-primary" (click)="scrollTo('projects')">
+          <i class="fas fa-rocket"></i>
+          View My Work
+        </button>
+        <button class="btn-outline" (click)="scrollTo('contact')">
+          <i class="fas fa-paper-plane"></i>
+          Get In Touch
+        </button>
+      </div>
+
+      <!-- Social Links -->
+      <div class="hero-socials animate-fade-in delay-4">
+        @for (social of socialLinks; track social.name) {
+          <a [href]="social.url" target="_blank" class="social-link" [attr.aria-label]="social.name">
+            <i [class]="social.icon"></i>
+          </a>
+        }
+        <div class="social-divider"></div>
+        <a href="mailto:rithikagrawal40@gmail.com" class="social-email mono">
+          rithikagrawal40@gmail.com
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero visual / code block -->
+    <div class="hero-visual animate-fade-in delay-2">
+      <div class="code-card glass">
+        <div class="code-header">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="filename mono">developer.py</span>
+        </div>
+        <pre class="code-body mono"><code><span class="code-keyword">class</span> <span class="code-class">Developer</span><span class="code-punct">:</span>
+
+    <span class="code-keyword">def</span> <span class="code-func">__init__</span><span class="code-punct">(self):</span>
+        <span class="code-prop">self</span>.name <span class="code-op">=</span> <span class="code-str">"Rithik Agrawal"</span>
+        <span class="code-prop">self</span>.role <span class="code-op">=</span> <span class="code-str">"Full Stack Dev"</span>
+        <span class="code-prop">self</span>.languages <span class="code-op">=</span> <span class="code-punct">[</span>
+            <span class="code-str">"Python"</span><span class="code-punct">,</span> <span class="code-str">"TypeScript"</span><span class="code-punct">,</span>
+            <span class="code-str">"Go"</span><span class="code-punct">,</span> <span class="code-str">"SQL"</span>
+        <span class="code-punct">]</span>
+        <span class="code-prop">self</span>.coffee <span class="code-op">=</span> <span class="code-num">float</span><span class="code-punct">(</span><span class="code-str">"inf"</span><span class="code-punct">)</span>
+
+    <span class="code-keyword">def</span> <span class="code-func">get_skills</span><span class="code-punct">(self):</span>
+        <span class="code-keyword">return</span> <span class="code-str">"backend + frontend + ml"</span>
+
+    <span class="code-keyword">def</span> <span class="code-func">is_available</span><span class="code-punct">(self):</span>
+        <span class="code-keyword">return</span> <span class="code-bool">True</span>  <span class="code-comment"># hire me!</span></code></pre>
+      </div>
+
+      <!-- Floating badges -->
+      <div class="badge badge-1 glass">
+        <i class="fab fa-python"></i>
+        <span>Python</span>
+      </div>
+      <div class="badge badge-2 glass">
+        <i class="fas fa-database"></i>
+        <span>PostgreSQL</span>
+      </div>
+      <div class="badge badge-3 glass">
+        <i class="fab fa-docker"></i>
+        <span>Docker</span>
+      </div>
+      <div class="badge badge-4 glass">
+        <i class="fab fa-angular"></i>
+        <span>Angular</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="hero-stats animate-slide-up delay-4">
+    <div class="container">
+      <div class="stats-grid">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-item">
+            <div class="stat-value">{{ stat.value }}{{ stat.suffix }}</div>
+            <div class="stat-label mono">{{ stat.label }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator">
+    <div class="scroll-mouse">
+      <div class="scroll-wheel"></div>
+    </div>
+    <span class="mono">Scroll</span>
+  </div>
+</section>

@@ -1,0 +1,46 @@
+<!-- Custom cursor (hidden on mobile) -->
+<app-cursor></app-cursor>
+
+<!-- Noise texture overlay -->
+<div class="noise-overlay"></div>
+
+<!-- Loading Screen -->
+<div class="loading-screen" [class.hidden]="!isLoading">
+  <div class="loader-logo mono">&lt;AC/&gt;</div>
+  <div class="loader-bar"></div>
+  <span class="loader-text">Initializing Portfolio...</span>
+</div>
+
+<!-- Main content -->
+<div class="app-wrapper" [class.loaded]="!isLoading">
+  <!-- Navigation -->
+  <app-navbar></app-navbar>
+
+  <!-- Sections -->
+  <main>
+    <app-hero></app-hero>
+    <app-about></app-about>
+    <app-skills></app-skills>
+    <app-experience></app-experience>
+    <app-projects></app-projects>
+    <app-contact></app-contact>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo mono">&lt;AC/&gt;</div>
+        <p class="footer-text mono">
+          Designed & Built by <span class="accent">Rithik Agrawal</span> · {{ currentYear }}
+        </p>
+        <button class="back-to-top" (click)="scrollToTop()" aria-label="Back to top">
+          <i class="fas fa-arrow-up"></i>
+        </button>
+      </div>
+      <div class="footer-note mono">
+        Built with Angular 17 · Hosted on Netlify · Open to opportunities
+      </div>
+    </div>
+  </footer>
+</div>
