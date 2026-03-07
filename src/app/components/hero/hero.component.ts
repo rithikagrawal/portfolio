@@ -22,11 +22,13 @@ export class HeroComponent implements OnInit, AfterViewInit {
   typeSpeed = 100;
 
   stats = [
-    { value: 8, label: 'Years Experience', suffix: '+' },
+    { value: 5, label: 'Years Experience', suffix: '+' },
     { value: 50, label: 'Projects Shipped', suffix: '+' },
     { value: 12, label: 'Open Source Repos', suffix: '' },
     { value: 99, label: 'Uptime SLA', suffix: '%' },
   ];
+  
+  email = "rithikagrawal40@gmail.com"
 
   ngOnInit(): void {
     setTimeout(() => this.typeWriter(), 500);
