@@ -1,0 +1,55 @@
+<section id="skills" class="section skills-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">My Arsenal</p>
+      <h2 class="section-title">Skills & Technologies</h2>
+      <p class="section-desc">
+        Proficient in a wide range of modern technologies, tools, and frameworks
+        across the full stack.
+      </p>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="category-filter reveal">
+      <button
+        class="filter-btn"
+        [class.active]="activeCategory === 'all'"
+        (click)="setCategory('all')">
+        All
+      </button>
+      @for (cat of categories; track cat) {
+        <button
+          class="filter-btn"
+          [class.active]="activeCategory === cat"
+          (click)="setCategory(cat)">
+          {{ getCategoryLabel(cat) }}
+        </button>
+      }
+    </div>
+
+    <!-- Skills Grid -->
+    <div class="skills-grid">
+      @for (skill of filteredSkills; track skill.name; let i = $index) {
+        <div class="skill-card card reveal" [style.animation-delay]="(i * 0.05) + 's'">
+          <div class="skill-header">
+            <div class="skill-icon">
+              <i [class]="skill.icon"></i>
+            </div>
+            <div class="skill-info">
+              <span class="skill-name">{{ skill.name }}</span>
+              <span class="skill-level-text mono">{{ skill.level }}%</span>
+            </div>
+          </div>
+          <div class="skill-bar">
+            <div
+              class="skill-bar-fill"
+              [style.width]="animatedBars ? skill.level + '%' : '0%'"
+              [style.background]="getBarColor(skill.category)">
+            </div>
+          </div>
+          <div class="skill-category-badge">{{ getCategoryLabel(skill.category) }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

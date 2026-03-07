@@ -1,0 +1,93 @@
+<section id="projects" class="section projects-section">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-label">Portfolio</p>
+      <h2 class="section-title">Things I've Built</h2>
+      <p class="section-desc">
+        A selection of projects spanning full-stack applications, data pipelines, ML systems, and DevOps tooling.
+      </p>
+    </div>
+
+    <!-- Filters -->
+    <div class="project-filters reveal">
+      @for (filter of filters; track filter.key) {
+        <button
+          class="filter-btn"
+          [class.active]="activeFilter === filter.key"
+          (click)="applyFilter(filter.key)">
+          {{ filter.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="projects-grid">
+      @for (project of displayedProjects; track project.id; let i = $index) {
+        <div class="project-card card reveal stagger-{{ (i % 4) + 1 }}"
+             [class.featured]="project.featured"
+             [style.background]="getProjectGradient(project.category)">
+
+          <!-- Card header with folder icon -->
+          <div class="card-header">
+            <div class="project-icon">
+              <i class="fas fa-folder-open"></i>
+            </div>
+            <div class="project-links">
+              @if (project.github) {
+                <a [href]="project.github" target="_blank" class="icon-link" aria-label="GitHub">
+                  <i class="fab fa-github"></i>
+                </a>
+              }
+              @if (project.demo) {
+                <a [href]="project.demo" target="_blank" class="icon-link" aria-label="Live Demo">
+                  <i class="fas fa-external-link-alt"></i>
+                </a>
+              }
+            </div>
+          </div>
+
+          <!-- Project info -->
+          <div class="project-body">
+            @if (project.featured) {
+              <span class="featured-badge">
+                <i class="fas fa-star"></i> Featured
+              </span>
+            }
+            <h3 class="project-title">{{ project.title }}</h3>
+            <p class="project-desc">{{ project.description }}</p>
+            <p class="project-long-desc">{{ project.longDescription }}</p>
+          </div>
+
+          <!-- Tech stack -->
+          <div class="project-tech">
+            @for (tech of project.tech.slice(0, 5); track tech) {
+              <span class="tech-tag mono">{{ tech }}</span>
+            }
+            @if (project.tech.length > 5) {
+              <span class="tech-more mono">+{{ project.tech.length - 5 }}</span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Show more -->
+    @if (filteredProjects.length > 4) {
+      <div class="show-more reveal">
+        <button class="btn-outline" (click)="showAll = !showAll">
+          <i [class]="showAll ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+          {{ showAll ? 'Show Less' : 'Show More Projects' }}
+        </button>
+      </div>
+    }
+
+    <!-- GitHub CTA -->
+    <div class="github-cta reveal">
+      <p class="mono">Want to see more?</p>
+      <a href="https://github.com/rithikagrawal" target="_blank" class="btn-primary">
+        <i class="fab fa-github"></i>
+        View All on GitHub
+      </a>
+    </div>
+  </div>
+</section>

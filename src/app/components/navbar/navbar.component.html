@@ -1,0 +1,65 @@
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="nav-container">
+    <!-- Logo -->
+    <div class="nav-logo" (click)="scrollTo('hero')">
+      <span class="logo-bracket">&lt;</span>
+      <span class="logo-text">AC</span>
+      <span class="logo-bracket">/&gt;</span>
+    </div>
+
+    <!-- Desktop Nav -->
+    <ul class="nav-links">
+      @for (item of navItems; track item.anchor) {
+        <li>
+          <button
+            class="nav-link"
+            [class.active]="activeSection === item.anchor"
+            (click)="scrollTo(item.anchor)">
+            {{ item.label }}
+          </button>
+        </li>
+      }
+    </ul>
+
+    <!-- CTA -->
+    <div class="nav-cta">
+      <a href="assets/rithik-agrawal-resume.pdf" target="_blank" class="btn-outline btn-sm">
+        <i class="fas fa-file-alt"></i> Resume
+      </a>
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <button class="hamburger" (click)="toggleMenu()" [class.active]="isMenuOpen" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu" [class.open]="isMenuOpen">
+  <div class="mobile-menu-inner">
+    <ul class="mobile-nav-links">
+      @for (item of navItems; track item.anchor; let i = $index) {
+        <li [style.animation-delay]="(i * 0.1) + 's'" [class.visible]="isMenuOpen">
+          <button class="mobile-nav-link" (click)="scrollTo(item.anchor)">
+            {{ item.label }}
+          </button>
+        </li>
+      }
+    </ul>
+
+    <div class="mobile-social">
+      @for (social of socialLinks; track social.name) {
+        <a [href]="social.url" target="_blank" class="social-icon">
+          <i [class]="social.icon"></i>
+        </a>
+      }
+    </div>
+
+    <a href="assets/rithik-agrawal-resume.pdf" target="_blank" class="btn-primary mobile-resume">
+      <i class="fas fa-download"></i> Download Resume
+    </a>
+  </div>
+</div>

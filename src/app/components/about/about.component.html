@@ -1,0 +1,77 @@
+<section id="about" class="section about-section">
+  <div class="container">
+    <div class="about-grid">
+      <!-- Image side -->
+      <div class="about-image-col reveal-left">
+        <div class="image-wrapper">
+          <div class="avatar-placeholder">
+            <div class="avatar-initials">AC</div>
+            <div class="avatar-ring ring-1"></div>
+            <div class="avatar-ring ring-2"></div>
+          </div>
+          <div class="image-accent"></div>
+          <!-- Location badge -->
+          <div class="location-badge glass">
+            <i class="fas fa-map-marker-alt"></i>
+            <span class="mono">San Francisco, CA</span>
+          </div>
+          <!-- Experience badge -->
+          <div class="exp-badge glass">
+            <span class="exp-number">8+</span>
+            <span class="mono">Years Coding</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content side -->
+      <div class="about-content reveal-right">
+        <p class="section-label">About Me</p>
+        <h2 class="section-title">
+          Turning Complex<br>
+          <span class="serif italic">Problems Into</span><br>
+          Elegant Solutions
+        </h2>
+
+        <div class="about-text">
+          <p>
+            I'm a full-stack software engineer with 8+ years of experience building
+            high-performance applications across fintech, e-commerce, and SaaS sectors.
+            I specialize in Python backend development and cloud-native architectures.
+          </p>
+          <p>
+            When I'm not pushing code, I'm contributing to open-source projects,
+            writing technical articles, or mentoring aspiring developers. I believe
+            great software is as much about <span class="highlight">clear communication</span> and
+            <span class="highlight">collaborative problem-solving</span> as it is about elegant code.
+          </p>
+          <p>
+            Currently open to senior/lead engineering roles and interesting consulting projects.
+          </p>
+        </div>
+
+        <!-- Tech stack -->
+        <div class="tech-section">
+          <p class="tech-label mono">Technologies I work with:</p>
+          <div class="tech-tags">
+            @for (tech of techStack; track tech) {
+              <span class="tech-tag">
+                <span class="mono tag-arrow">▸</span> {{ tech }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <div class="about-ctas">
+          <a href="assets/rithik-agrawal-resume.pdf" target="_blank" class="btn-primary">
+            <i class="fas fa-download"></i>
+            Download Resume
+          </a>
+          <!-- <a href="https://dev.to/alexchen" target="_blank" class="btn-outline">
+            <i class="fab fa-dev"></i>
+            Read My Blog
+          </a> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
