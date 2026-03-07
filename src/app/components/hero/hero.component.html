@@ -51,13 +51,13 @@
       <!-- Social Links -->
       <div class="hero-socials animate-fade-in delay-4">
         @for (social of socialLinks; track social.name) {
-          <a [href]="social.url" target="_blank" class="social-link" [attr.aria-label]="social.name">
-            <i [class]="social.icon"></i>
-          </a>
+        <a [href]="social.url" target="_blank" class="social-link" [attr.aria-label]="social.name">
+          <i [class]="social.icon"></i>
+        </a>
         }
         <div class="social-divider"></div>
         <a href="mailto:rithikagrawal40@gmail.com" class="social-email mono">
-          rithikagrawal40@gmail.com
+          {{email}}
         </a>
       </div>
     </div>
@@ -71,7 +71,8 @@
           <span class="dot green"></span>
           <span class="filename mono">developer.py</span>
         </div>
-        <pre class="code-body mono"><code><span class="code-keyword">class</span> <span class="code-class">Developer</span><span class="code-punct">:</span>
+        <pre
+          class="code-body mono"><code><span class="code-keyword">class</span> <span class="code-class">Developer</span><span class="code-punct">:</span>
 
     <span class="code-keyword">def</span> <span class="code-func">__init__</span><span class="code-punct">(self):</span>
         <span class="code-prop">self</span>.name <span class="code-op">=</span> <span class="code-str">"Rithik Agrawal"</span>
@@ -114,10 +115,10 @@
     <div class="container">
       <div class="stats-grid">
         @for (stat of stats; track stat.label) {
-          <div class="stat-item">
-            <div class="stat-value">{{ stat.value }}{{ stat.suffix }}</div>
-            <div class="stat-label mono">{{ stat.label }}</div>
-          </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ stat.value }}{{ stat.suffix }}</div>
+          <div class="stat-label mono">{{ stat.label }}</div>
+        </div>
         }
       </div>
     </div>
