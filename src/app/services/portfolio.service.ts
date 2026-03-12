@@ -111,57 +111,62 @@ export class PortfolioService {
   getExperiences(): Experience[] {
     return [
       {
-        company: 'NeuralTech Systems',
-        role: 'Senior Full Stack Engineer',
-        period: '2022 — Present',
+        company: 'Power Financial Wellness, Inc.',
+        role: 'Software Developer (Full Stack)',
+        period: 'August, 2022 — Present',
         current: true,
         description: [
-          'Architected and led development of a microservices platform serving 2M+ daily active users',
-          'Reduced API response times by 65% through Redis caching and query optimization',
-          'Mentored team of 6 engineers, establishing code review processes and engineering standards',
-          'Introduced ML-powered features increasing user engagement metrics by 40%'
+          'Architected and delivered scalable Flask-based backend services powering financial wellness solutions for multinational banking clients operating across 30+ countries',
+          'Engineered RESTful APIs achieving a 40% reduction in response time, handling high-volume daily transactions for enterprise-grade financial platforms',
+          'Designed and managed robust data storage solutions using PostgreSQL and Amazon S3, ensuring data integrity and compliance for international banking operations',
+          'Led front-to-back integration of Angular UIs with Python backend APIs, delivering seamless cross-functional financial products under tight deadlines',
+          'Introduced TDD and BDD automated testing frameworks (Pytest, Behave), reducing production bugs by 20% across mission-critical banking services',
+          'Conducted rigorous code reviews and refactored legacy systems, significantly improving reliability, scalability, and maintainability of core financial infrastructure',
+          'Deployed and maintained production applications on DigitalOcean and Jenkins CI/CD pipelines, ensuring high availability for global banking clients',
         ],
-        tech: ['Python', 'FastAPI', 'Angular', 'PostgreSQL', 'K8s', 'AWS']
+        tech: ['Python', 'Flask', 'Angular', 'PostgreSQL', 'Amazon S3', 'REST APIs', 'Docker', 'DigitalOcean', 'Jenkins', 'PyTest']
       },
       {
-        company: 'DataFlow Labs',
-        role: 'Backend Engineer',
-        period: '2020 — 2022',
+        company: 'Jio Platforms Limited',
+        role: 'Software Engineer Team Lead',
+        period: 'Aug 2021 — Aug 2022',
         current: false,
         description: [
-          'Built real-time data processing pipelines handling 50M+ events/day using Apache Kafka',
-          'Designed and implemented distributed caching layer reducing database load by 80%',
-          'Contributed to open-source data tooling used by 500+ companies globally',
-          'Collaborated with data science team to deploy ML models into production'
+          'Led a team of 20+ Software Engineers building the JioMeet HD video-conferencing app with 15M+ active users',
+          'Developed Angular-based frontend components and Python backend services, delivering 50+ high-value features',
+          'Collaborated with Product, Design, and DevOps teams for timely cross-functional rollouts in an Agile/Scrum environment',
+          'Mentored and trained new recruits to production-ready technical competence',
+          'Performed Usability, Functional, Regression, and Interoperability Testing with timely bug reporting',
+          'Recognised with the Spotlight Award for outstanding contribution to the JioMeet platform',
         ],
-        tech: ['Python', 'Kafka', 'Spark', 'PostgreSQL', 'Docker']
+        tech: ['Python', 'Angular', 'TypeScript', 'PostgreSQL', 'REST APIs', 'Docker']
       },
-      {
-        company: 'CloudBridge Inc',
-        role: 'Software Engineer',
-        period: '2018 — 2020',
-        current: false,
-        description: [
-          'Developed RESTful APIs and microservices for SaaS CRM platform',
-          'Migrated monolithic application to microservices reducing deployment time by 70%',
-          'Implemented automated testing suite achieving 90% code coverage',
-          'Participated in on-call rotation ensuring 99.9% uptime SLA'
-        ],
-        tech: ['Python', 'Node.js', 'React', 'MongoDB', 'AWS']
-      },
-      {
-        company: 'TechStart Studio',
-        role: 'Junior Developer',
-        period: '2016 — 2018',
-        current: false,
-        description: [
-          'Full-stack development for startup clients across fintech and healthcare verticals',
-          'Built responsive web applications reaching 100k+ users',
-          'Integrated third-party APIs including payment gateways and mapping services',
-          'Gained experience in agile methodologies and rapid iteration'
-        ],
-        tech: ['JavaScript', 'Python', 'Django', 'MySQL', 'React']
-      }
+      // {
+      //   company: 'CloudBridge Inc',
+      //   role: 'Software Engineer',
+      //   period: '2018 — 2020',
+      //   current: false,
+      //   description: [
+      //     'Developed RESTful APIs and microservices for SaaS CRM platform',
+      //     'Migrated monolithic application to microservices reducing deployment time by 70%',
+      //     'Implemented automated testing suite achieving 90% code coverage',
+      //     'Participated in on-call rotation ensuring 99.9% uptime SLA'
+      //   ],
+      //   tech: ['Python', 'Node.js', 'React', 'MongoDB', 'AWS']
+      // },
+      // {
+      //   company: 'TechStart Studio',
+      //   role: 'Junior Developer',
+      //   period: '2016 — 2018',
+      //   current: false,
+      //   description: [
+      //     'Full-stack development for startup clients across fintech and healthcare verticals',
+      //     'Built responsive web applications reaching 100k+ users',
+      //     'Integrated third-party APIs including payment gateways and mapping services',
+      //     'Gained experience in agile methodologies and rapid iteration'
+      //   ],
+      //   tech: ['JavaScript', 'Python', 'Django', 'MySQL', 'React']
+      // }
     ];
   }
 
