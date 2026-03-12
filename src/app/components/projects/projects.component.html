@@ -22,10 +22,10 @@
 
     <!-- Projects Grid -->
     <div class="projects-grid">
-      @for (project of displayedProjects; track project.id; let i = $index) {
-        <div class="project-card card reveal stagger-{{ (i % 4) + 1 }}"
-             [class.featured]="project.featured"
-             [style.background]="getProjectGradient(project.category)">
+  @for (project of displayedProjects; track i; let i = $index) {
+    <div class="project-card card"
+         [class.featured]="project.featured"
+         [style.background]="getProjectGradient(project.category)">
 
           <!-- Card header with folder icon -->
           <div class="card-header">

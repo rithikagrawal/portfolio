@@ -32,11 +32,12 @@ export class ProjectsComponent implements OnInit {
   }
 
   applyFilter(key: string): void {
-    this.activeFilter = key;
-    this.filteredProjects = key === 'all'
-      ? this.allProjects
-      : this.allProjects.filter(p => p.category === key);
-  }
+  this.activeFilter = key;
+  this.showAll = false;
+  this.filteredProjects = key === 'all'
+    ? [...this.allProjects]  // spread to force new array reference
+    : [...this.allProjects.filter(p => p.category === key)];
+}
 
   get displayedProjects(): Project[] {
     return this.showAll ? this.filteredProjects : this.filteredProjects.slice(0, 4);
