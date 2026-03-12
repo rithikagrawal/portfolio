@@ -21,16 +21,33 @@
             "outputPath": "dist/dev-portfolio",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              { "glob": "_redirects", "input": "src", "output": "/" },
-              { "glob": "netlify.toml", "input": ".", "output": "/" }
+              {
+                "glob": "_redirects",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "netlify.toml",
+                "input": ".",
+                "output": "/"
+              }
             ],
-            "styles": ["src/styles.scss"],
-            "scripts": []
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": [],
+            "optimization": {
+              "fonts": {
+                "inline": false
+              }
+            }
           },
           "configurations": {
             "production": {
@@ -54,8 +71,12 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
-            "production": { "buildTarget": "dev-portfolio:build:production" },
-            "development": { "buildTarget": "dev-portfolio:build:development" }
+            "production": {
+              "buildTarget": "dev-portfolio:build:production"
+            },
+            "development": {
+              "buildTarget": "dev-portfolio:build:development"
+            }
           },
           "defaultConfiguration": "development"
         }
