@@ -9,15 +9,9 @@
       <!-- Company tabs -->
       <div class="company-tabs reveal-left">
         @for (exp of experiences; track exp.company; let i = $index) {
-          <button
-            class="company-tab"
-            [class.active]="activeIndex === i"
-            (click)="setActive(i)">
-            <span class="company-name">{{ exp.company }}</span>
-            @if (exp.current) {
-              <span class="current-badge">Current</span>
-            }
-          </button>
+        <button class="company-tab" [class.active]="activeIndex === i" (click)="setActive(i)">
+          <span class="company-name">{{ exp.company }}</span>
+        </button>
         }
         <div class="tab-indicator" [style.top]="(activeIndex * 56) + 'px'"></div>
       </div>
@@ -25,33 +19,38 @@
       <!-- Experience details -->
       <div class="experience-details reveal-right">
         @if (experiences[activeIndex]; as exp) {
-          <div class="detail-content">
-            <div class="detail-header">
-              <h3 class="role-title">
-                {{ exp.role }}
-                <span class="company-at">&#64; {{ exp.company }}</span>
-              </h3>
-              <div class="period mono">
-                <i class="fas fa-calendar-alt"></i>
-                {{ exp.period }}
-              </div>
-            </div>
-
-            <ul class="responsibilities">
-              @for (item of exp.description; track item) {
-                <li>
-                  <span class="bullet">▸</span>
-                  {{ item }}
-                </li>
-              }
-            </ul>
-
-            <div class="tech-used">
-              @for (tech of exp.tech; track tech) {
-                <span class="tech-pill mono">{{ tech }}</span>
-              }
+        <div class="detail-content">
+          <div class="detail-header">
+            <h3 class="role-title">
+              {{ exp.role }}
+              <span class="company-at">&#64; {{ exp.company }}</span>
+            </h3>
+            @if (exp.current) {
+            <span class="current-badge">
+              <span class="dot-pulse-green"></span> Current
+            </span>
+            }
+            <div class="period mono">
+              <i class="fas fa-calendar-alt"></i>
+              {{ exp.period }}
             </div>
           </div>
+
+          <ul class="responsibilities">
+            @for (item of exp.description; track item) {
+            <li>
+              <span class="bullet">▸</span>
+              {{ item }}
+            </li>
+            }
+          </ul>
+
+          <div class="tech-used">
+            @for (tech of exp.tech; track tech) {
+            <span class="tech-pill mono">{{ tech }}</span>
+            }
+          </div>
+        </div>
         }
       </div>
     </div>
