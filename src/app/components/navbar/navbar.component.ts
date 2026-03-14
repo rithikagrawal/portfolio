@@ -45,6 +45,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       window.scrollTo({ top, behavior: 'smooth' });
     }
     this.isMenuOpen = false;
+    document.body.style.overflow = '';
   }
 
   toggleMenu(): void {
