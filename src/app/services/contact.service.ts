@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 export interface ContactForm {
   name: string;
   email: string;
@@ -13,10 +15,10 @@ export interface ContactForm {
 
 @Injectable({ providedIn: 'root' })
 export class ContactService {
-  // EmailJS configuration - replace with your actual IDs
-  private emailjsServiceId = 'YOUR_EMAILJS_SERVICE_ID';
-  private emailjsTemplateId = 'YOUR_EMAILJS_TEMPLATE_ID';
-  private emailjsPublicKey = 'YOUR_EMAILJS_PUBLIC_KEY';
+  // EmailJS configuration
+  private emailjsServiceId = environment.emailjsServiceId;
+  private emailjsTemplateId = environment.emailjsTemplateId;
+  private emailjsPublicKey = environment.emailjsPublicKey;
 
   constructor(private http: HttpClient) {}
 
@@ -37,6 +39,6 @@ export class ContactService {
       }
     };
 
-    return this.http.post('https://api.emailjs.com/api/v1.0/email/send', payload);
+    return this.http.post('https://api.emailjs.com/api/v1.0/email/send', payload, { responseType: 'text' as 'json' });
   }
 }
