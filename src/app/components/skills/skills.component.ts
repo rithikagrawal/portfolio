@@ -17,6 +17,7 @@ export class SkillsComponent implements OnInit {
   categories = ['frontend', 'backend', 'database', 'devops', 'tools'];
   activeCategory = 'all';
   animatedBars = false;
+  filterKey = 0;
 
   get filteredSkills(): Skill[] {
     if (this.activeCategory === 'all') return this.allSkills;
@@ -40,7 +41,15 @@ export class SkillsComponent implements OnInit {
   setCategory(cat: string): void {
     this.activeCategory = cat;
     this.animatedBars = false;
-    setTimeout(() => this.animatedBars = true, 100);
+    this.filterKey++;
+
+    setTimeout(() => {
+      this.animatedBars = true;
+      // Re-trigger reveal for newly rendered cards
+      document.querySelectorAll('.skills-grid .reveal').forEach(el => {
+        el.classList.add('visible'); // or whatever class your reveal uses
+      });
+    }, 50);
   }
 
   getBarColor(category: string): string {

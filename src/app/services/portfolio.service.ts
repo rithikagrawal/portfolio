@@ -174,7 +174,7 @@ export class PortfolioService {
     return [
       { name: 'GitHub', url: 'https://github.com/rithikagrawal', icon: 'fab fa-github' },
       { name: 'LinkedIn', url: 'https://linkedin.com/in/rithik-agrawal', icon: 'fab fa-linkedin' },
-      { name: 'Twitter', url: 'https://twitter.com/rithik', icon: 'fab fa-twitter' },
+      { name: 'Twitter', url: 'https://twitter.com/rithik_agrawal_', icon: 'fab fa-twitter' },
       // { name: 'Dev.to', url: 'https://dev.to/alexchen', icon: 'fab fa-dev' },
     ];
   }
