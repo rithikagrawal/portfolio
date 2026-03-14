@@ -10,7 +10,9 @@
     "prebuild:prod": "node set-env.js",
     "build:prod": "ng build --configuration production",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "build:gh": "node set-env.js && ng build --configuration production --base-href /portfolio/",
+    "deploy:gh": "npm run build:gh && npx angular-cli-ghpages --dir=dist/dev-portfolio/browser"
   },
   "private": true,
   "dependencies": {
@@ -38,6 +40,7 @@
     "@angular/cli": "^17.0.0",
     "@angular/compiler-cli": "^17.0.0",
     "@types/node": "^20.0.0",
+    "angular-cli-ghpages": "^1.0.7",
     "typescript": "~5.2.0"
   }
 }
