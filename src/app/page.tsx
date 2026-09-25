@@ -1,22 +1,48 @@
 'use client';
-import { Scene } from '@/components/3d/Scene';
+import dynamic from 'next/dynamic';
 import { GUIModal } from '@/components/sections/GUIModal';
 import { MatrixRain } from '@/components/terminal/MatrixRain';
 import { useTerminalStore } from '@/store/terminal';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Terminal, Briefcase, Code2, Cpu, Mail, FileText, Volume2, VolumeX } from 'lucide-react';
 import { sound } from '@/lib/audio';
 
+// Dynamically import Three.js Scene with ssr: false to prevent hydration mismatches
+const Scene = dynamic(() => import('@/components/3d/Scene').then((mod) => mod.Scene), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center font-mono text-term-dim text-xs select-none">
+      <div className="flex items-center gap-2">
+        <span className="w-2.5 h-2.5 rounded-full bg-term-accent animate-pulse" />
+        <span>Initializing 3D CRT Phosphor Engine...</span>
+      </div>
+    </div>
+  ),
+});
+
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
   const { isMatrixActive, theme, soundEnabled, viewMode, activeSection, setViewMode, toggleSound, setTheme } = useTerminalStore();
 
   // Restore stored theme & sound on mount
   useEffect(() => {
+    setMounted(true);
     const savedTheme = localStorage.getItem('term_theme') as 'amber' | 'matrix' | 'cyber' | 'dracula' | null;
     if (savedTheme) {
       setTheme(savedTheme);
     }
   }, [setTheme]);
+
+  if (!mounted) {
+    return (
+      <main className="w-screen h-screen bg-[#0a0800] text-[#ffb000] flex items-center justify-center font-mono text-xs select-none">
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#ffb000] animate-pulse" />
+          <span>Bootstrapping PortfolioOS...</span>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-term-bg select-none">
