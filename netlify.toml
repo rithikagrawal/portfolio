@@ -1,11 +1,9 @@
 [build]
-  command = "npm run build:prod"
-  publish = "dist/dev-portfolio/browser"
+  command = "npm run build"
+  publish = ".next"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -14,11 +12,12 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
+    X-Frame-Options = "SAMEORIGIN"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
 
 [[headers]]
-  for = "/assets/*"
+  for = "/resume.pdf"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "application/pdf"
+    Cache-Control = "public, max-age=86400"

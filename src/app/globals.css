@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Default: Amber Phosphor CRT */
+  --term-bg: #0a0800;
+  --term-text: #ffb000;
+  --term-accent: #ffd000;
+  --term-dim: rgba(255, 176, 0, 0.45);
+  --term-subtle: rgba(255, 176, 0, 0.15);
+  --term-prompt: #ffb000;
+  --term-border: rgba(255, 176, 0, 0.3);
+  --term-glow: 0 0 12px rgba(255, 176, 0, 0.55);
+  --term-glow-strong: 0 0 20px rgba(255, 176, 0, 0.85);
+  --term-scanline: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='matrix'] {
+  --term-bg: #030a04;
+  --term-text: #00ff41;
+  --term-accent: #33ff66;
+  --term-dim: rgba(0, 255, 65, 0.45);
+  --term-subtle: rgba(0, 255, 65, 0.15);
+  --term-prompt: #00ff41;
+  --term-border: rgba(0, 255, 65, 0.3);
+  --term-glow: 0 0 12px rgba(0, 255, 65, 0.55);
+  --term-glow-strong: 0 0 20px rgba(0, 255, 65, 0.85);
+  --term-scanline: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme='cyber'] {
+  --term-bg: #060913;
+  --term-text: #00d4ff;
+  --term-accent: #ff007f;
+  --term-dim: rgba(0, 212, 255, 0.45);
+  --term-subtle: rgba(0, 212, 255, 0.15);
+  --term-prompt: #00d4ff;
+  --term-border: rgba(0, 212, 255, 0.3);
+  --term-glow: 0 0 12px rgba(0, 212, 255, 0.55);
+  --term-glow-strong: 0 0 20px rgba(0, 212, 255, 0.85);
+  --term-scanline: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme='dracula'] {
+  --term-bg: #181922;
+  --term-text: #f8f8f2;
+  --term-accent: #bd93f9;
+  --term-dim: rgba(248, 248, 242, 0.45);
+  --term-subtle: rgba(189, 147, 249, 0.15);
+  --term-prompt: #50fa7b;
+  --term-border: rgba(189, 147, 249, 0.3);
+  --term-glow: 0 0 10px rgba(189, 147, 249, 0.45);
+  --term-glow-strong: 0 0 18px rgba(189, 147, 249, 0.75);
+  --term-scanline: rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--term-bg);
+  color: var(--term-text);
+  overflow: hidden;
+  user-select: text;
+}
+
+/* Custom terminal scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--term-border);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--term-text);
+}
+
+/* Terminal text glow */
+.term-glow {
+  text-shadow: var(--term-glow);
+}
+
+.term-glow-strong {
+  text-shadow: var(--term-glow-strong);
+}
+
+/* CRT Screen Effects */
+.crt-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 60%, rgba(0, 0, 0, 0.65) 100%),
+    linear-gradient(rgba(18, 16, 16, 0) 50%, var(--term-scanline) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+  background-size: 100% 100%, 100% 4px, 6px 100%;
+  z-index: 20;
+}
+
+/* Curvature vignette */
+.crt-curved-frame {
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 15px var(--term-subtle),
+    0 0 40px rgba(0, 0, 0, 0.8);
+  border-radius: 12px;
+}
+
+/* Cursor blink */
+@keyframes blink-caret {
+  from,
+  to {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-caret {
+  animation: blink-caret 1s step-end infinite;
+}

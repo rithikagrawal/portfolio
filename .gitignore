@@ -1,5 +1,9 @@
 node_modules
+.next
 .angular
 /dist
+/out
 src/environments/
 .env
+.env.local
+.DS_Store
