@@ -11,22 +11,19 @@ import { sound } from '@/lib/audio';
 export function GUIModal() {
   const { viewMode, activeSection, setViewMode } = useTerminalStore();
 
-  if (viewMode !== 'gui') return null;
-
-  const currentSection = activeSection || 'experience';
+  const handleClose = () => {
+    sound.playKeypress();
+    setViewMode('terminal', null);
+  };
 
   const handleTabChange = (section: GUISection) => {
     sound.playKeypress();
     setViewMode('gui', section);
   };
 
-  const handleClose = () => {
-    sound.playKeypress();
-    setViewMode('terminal', null);
-  };
-
-  // Close on Escape key
+  // Close on Escape key - must be called unconditionally before any return
   useEffect(() => {
+    if (viewMode !== 'gui') return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         handleClose();
@@ -34,7 +31,11 @@ export function GUIModal() {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
+  }, [viewMode]);
+
+  if (viewMode !== 'gui') return null;
+
+  const currentSection = activeSection || 'experience';
 
   return (
     <div
@@ -84,6 +85,7 @@ export function GUIModal() {
                 return (
                   <button
                     key={tab.id}
+                    data-tab={tab.id}
                     onClick={() => handleTabChange(tab.id as GUISection)}
                     className={`flex items-center gap-1.5 px-3 py-1 rounded text-xs transition-colors font-mono font-semibold ${
                       isActive
