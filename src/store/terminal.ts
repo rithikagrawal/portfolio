@@ -24,6 +24,7 @@ interface TerminalState {
   viewMode: ViewMode;
   activeSection: GUISection;
   isBooting: boolean;
+  hasBooted: boolean;
   isMatrixActive: boolean;
 
   // Actions
@@ -36,6 +37,7 @@ interface TerminalState {
   toggleSound: () => boolean;
   setViewMode: (mode: ViewMode, section?: GUISection) => void;
   setBooting: (booting: boolean) => void;
+  setHasBooted: (booted: boolean) => void;
   setMatrixActive: (active: boolean) => void;
 }
 
@@ -49,6 +51,7 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
   viewMode: 'terminal',
   activeSection: null,
   isBooting: false,
+  hasBooted: false,
   isMatrixActive: false,
 
   addOutput: (item) => {
@@ -126,5 +129,6 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
   },
 
   setBooting: (booting) => set({ isBooting: booting }),
+  setHasBooted: (booted) => set({ hasBooted: booted }),
   setMatrixActive: (active) => set({ isMatrixActive: active }),
 }));

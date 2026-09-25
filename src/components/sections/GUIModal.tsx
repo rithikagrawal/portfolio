@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import { useTerminalStore, GUISection } from '@/store/terminal';
 import { ExperienceView } from './ExperienceView';
 import { ProjectsView } from './ProjectsView';
@@ -24,8 +25,26 @@ export function GUIModal() {
     setViewMode('terminal', null);
   };
 
+  // Close on Escape key
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          handleClose();
+        }
+      }}
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-hidden animate-fadeIn"
+    >
       <div className="relative w-full max-w-5xl h-[92vh] flex flex-col bg-[#0a0800]/98 border border-term-border rounded-lg shadow-2xl crt-curved-frame overflow-hidden">
         {/* CRT Scanline overlay */}
         <div className="crt-overlay pointer-events-none" />

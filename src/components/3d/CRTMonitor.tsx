@@ -4,10 +4,12 @@ import { useFrame } from '@react-three/fiber';
 import { Float, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Terminal } from '@/components/terminal/Terminal';
+import { useTerminalStore } from '@/store/terminal';
 
 export function CRTMonitor() {
   const groupRef = useRef<THREE.Group>(null);
   const monitorRef = useRef<THREE.Group>(null);
+  const viewMode = useTerminalStore((s) => s.viewMode);
 
   useFrame(({ clock, pointer }) => {
     if (!monitorRef.current) return;
@@ -81,20 +83,22 @@ export function CRTMonitor() {
             <meshStandardMaterial color="#14120e" metalness={0.7} roughness={0.4} />
           </mesh>
 
-          {/* Live DOM Terminal Projected on Screen */}
-          <Html
-            transform
-            position={[0, 0, 0.42]}
-            scale={0.25}
-            style={{
-              width: '840px',
-              height: '560px',
-            }}
-          >
-            <div className="w-[840px] h-[560px]">
-              <Terminal />
-            </div>
-          </Html>
+          {/* Live DOM Terminal Projected on Screen — Closed when in GUI mode */}
+          {viewMode !== 'gui' && (
+            <Html
+              transform
+              position={[0, 0, 0.42]}
+              scale={0.25}
+              style={{
+                width: '840px',
+                height: '560px',
+              }}
+            >
+              <div className="w-[840px] h-[560px]">
+                <Terminal />
+              </div>
+            </Html>
+          )}
         </group>
       </Float>
     </group>

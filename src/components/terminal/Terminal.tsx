@@ -14,6 +14,7 @@ export function Terminal() {
     soundEnabled,
     viewMode,
     isBooting,
+    hasBooted,
     addOutput,
     recordCommand,
     navigateHistory,
@@ -21,10 +22,10 @@ export function Terminal() {
     toggleSound,
     setViewMode,
     setBooting,
+    setHasBooted,
   } = useTerminalStore();
 
   const [input, setInput] = useState('');
-  const [bootDone, setBootDone] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -39,11 +40,11 @@ export function Terminal() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [outputs, bootDone, suggestions]);
+  }, [outputs, hasBooted, suggestions]);
 
   // Initial welcome greeting if boot done
   const handleBootComplete = useCallback(() => {
-    setBootDone(true);
+    setHasBooted(true);
     setBooting(false);
     // Initial welcome banner
     addOutput({
@@ -234,7 +235,7 @@ export function Terminal() {
         ref={scrollRef}
         className="relative z-10 flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-2 text-xs sm:text-sm font-mono leading-relaxed"
       >
-        {!bootDone ? (
+        {!hasBooted ? (
           <BootSequence onComplete={handleBootComplete} />
         ) : (
           <>
@@ -313,7 +314,7 @@ export function Terminal() {
       </div>
 
       {/* Touch-Friendly Quick Command Chips (Mobile / Quick access) */}
-      {bootDone && (
+      {hasBooted && (
         <div className="relative z-30 px-3 py-2 bg-black/80 border-t border-term-border/70 flex items-center gap-1.5 overflow-x-auto text-[11px] scrollbar-none">
           <span className="text-term-dim uppercase text-[10px] tracking-wider font-bold whitespace-nowrap flex items-center gap-1 mr-1">
             <Sparkles className="w-2.5 h-2.5" /> Quick:

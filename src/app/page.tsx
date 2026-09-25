@@ -8,7 +8,7 @@ import { Terminal, Briefcase, Code2, Cpu, Mail, FileText, Volume2, VolumeX } fro
 import { sound } from '@/lib/audio';
 
 export default function Home() {
-  const { isMatrixActive, theme, soundEnabled, setViewMode, toggleSound, setTheme } = useTerminalStore();
+  const { isMatrixActive, theme, soundEnabled, viewMode, activeSection, setViewMode, toggleSound, setTheme } = useTerminalStore();
 
   // Restore stored theme & sound on mount
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function Home() {
       </header>
 
       {/* 3D CRT Monitor Scene */}
-      <div className="w-full h-full pt-10">
+      <div className={`w-full h-full pt-10 transition-opacity duration-300 ${viewMode === 'gui' ? 'opacity-0 pointer-events-none invisible' : 'opacity-100 visible'}`}>
         <Scene />
       </div>
 

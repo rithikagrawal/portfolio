@@ -4,9 +4,11 @@ import { Canvas } from '@react-three/fiber';
 import { Stars } from '@react-three/drei';
 import { CRTMonitor } from './CRTMonitor';
 import { Terminal } from '@/components/terminal/Terminal';
+import { useTerminalStore } from '@/store/terminal';
 
 export function Scene() {
   const [isMobile, setIsMobile] = useState(false);
+  const viewMode = useTerminalStore((s) => s.viewMode);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -18,8 +20,9 @@ export function Scene() {
   }, []);
 
   // For mobile viewports (< 860px), render high-performance direct 2D terminal with CRT overlay
-  // This guarantees buttery 60fps performance and instant touch interaction on mobile devices
+  // When in GUI mode, return null so the 2D terminal window is closed
   if (isMobile) {
+    if (viewMode === 'gui') return null;
     return (
       <div className="w-full h-full p-2 sm:p-4 flex items-center justify-center">
         <div className="w-full max-w-4xl h-[92vh]">
