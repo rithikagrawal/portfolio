@@ -14,7 +14,10 @@ export interface TerminalOutputItem {
 export type ThemeType = 'amber' | 'matrix' | 'cyber' | 'dracula';
 export type ViewMode = 'terminal' | 'gui';
 export type GUISection = 'experience' | 'projects' | 'skills' | 'contact' | null;
-export type GameType = 'snake' | 'pong' | null;
+export type ActiveAppType = 'snake' | 'pong' | 'htop' | 'arch' | 'nano' | 'type-test' | 'adventure' | 'guestbook' | 'radio' | null;
+export type GameType = ActiveAppType;
+export type MonitorModelType = 'amber-crt' | 'ibm-5151' | 'cyberpunk';
+export type SceneModeType = 'cosmos' | 'desk';
 
 interface TerminalState {
   outputs: TerminalOutputItem[];
@@ -30,7 +33,15 @@ interface TerminalState {
   hasBooted: boolean;
   isMatrixActive: boolean;
   activeGame: GameType;
+  activeApp: ActiveAppType;
+  activeFilePath: string | null;
   isPoweredOn: boolean;
+  isDegaussing: boolean;
+  isOrbitMode: boolean;
+  monitorModel: MonitorModelType;
+  sceneMode: SceneModeType;
+  isRadioPlaying: boolean;
+  radioTrackIndex: number;
 
   // Actions
   addOutput: (item: Omit<TerminalOutputItem, 'id' | 'timestamp'>) => void;
@@ -46,7 +57,14 @@ interface TerminalState {
   setHasBooted: (booted: boolean) => void;
   setMatrixActive: (active: boolean) => void;
   setActiveGame: (game: GameType) => void;
+  setActiveApp: (app: ActiveAppType, filePath?: string) => void;
   togglePower: () => void;
+  triggerDegauss: () => void;
+  toggleOrbitMode: () => boolean;
+  setMonitorModel: (model: MonitorModelType) => void;
+  toggleSceneMode: () => SceneModeType;
+  toggleRadio: () => boolean;
+  nextRadioTrack: () => number;
 }
 
 export const useTerminalStore = create<TerminalState>((set, get) => ({
@@ -63,7 +81,15 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
   hasBooted: false,
   isMatrixActive: false,
   activeGame: null,
+  activeApp: null,
+  activeFilePath: null,
   isPoweredOn: true,
+  isDegaussing: false,
+  isOrbitMode: false,
+  monitorModel: 'amber-crt',
+  sceneMode: 'cosmos',
+  isRadioPlaying: false,
+  radioTrackIndex: 0,
 
   addOutput: (item) => {
     const newItem: TerminalOutputItem = {
@@ -147,7 +173,8 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
   setBooting: (booting) => set({ isBooting: booting }),
   setHasBooted: (booted) => set({ hasBooted: booted }),
   setMatrixActive: (active) => set({ isMatrixActive: active }),
-  setActiveGame: (game) => set({ activeGame: game }),
+  setActiveGame: (game) => set({ activeGame: game, activeApp: game }),
+  setActiveApp: (app, filePath = undefined) => set({ activeApp: app, activeGame: app, activeFilePath: filePath || null }),
 
   togglePower: () => {
     const next = !get().isPoweredOn;
@@ -158,4 +185,40 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
     }
     set({ isPoweredOn: next });
   },
+
+  triggerDegauss: () => {
+    if (get().isDegaussing) return;
+    sound.playPowerUp(); // Degauss heavy magnetic coil sound
+    set({ isDegaussing: true });
+    setTimeout(() => {
+      set({ isDegaussing: false });
+    }, 1200);
+  },
+
+  toggleOrbitMode: () => {
+    const next = !get().isOrbitMode;
+    set({ isOrbitMode: next });
+    return next;
+  },
+
+  setMonitorModel: (model) => set({ monitorModel: model }),
+
+  toggleSceneMode: () => {
+    const next = get().sceneMode === 'cosmos' ? 'desk' : 'cosmos';
+    set({ sceneMode: next });
+    return next;
+  },
+
+  toggleRadio: () => {
+    const next = !get().isRadioPlaying;
+    set({ isRadioPlaying: next });
+    return next;
+  },
+
+  nextRadioTrack: () => {
+    const nextTrack = (get().radioTrackIndex + 1) % 4;
+    set({ radioTrackIndex: nextTrack });
+    return nextTrack;
+  },
 }));
+

@@ -8,20 +8,39 @@ export function ContactView() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [receipt, setReceipt] = useState<{ id: string; message: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     sound.playEnter();
     setStatus('sending');
 
-    // Default mailto fallback ensuring 100% reliable message transmission
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setReceipt({ id: data.receiptId, message: data.message });
+        setStatus('sent');
+        return;
+      }
+    } catch {
+      // Fallback to mailto on network or API failure
+    }
+
+    // Direct mailto fallback
     const mailto = `mailto:${PORTFOLIO_DATA.personal.email}?subject=Inquiry from ${encodeURIComponent(
       formData.name
     )}&body=${encodeURIComponent(formData.message + '\n\nReply-To: ' + formData.email)}`;
 
     setTimeout(() => {
+      setReceipt({ id: 'MAILTO-' + Date.now().toString(36).toUpperCase(), message: 'Transmitted via direct mail protocol.' });
       setStatus('sent');
       window.open(mailto, '_blank');
-    }, 600);
+    }, 500);
   };
 
   return (
@@ -126,15 +145,23 @@ export function ContactView() {
           </h3>
 
           {status === 'sent' ? (
-            <div className="py-8 text-center space-y-2">
+            <div className="py-6 text-center space-y-2.5">
               <CheckCircle2 className="w-10 h-10 text-green-400 mx-auto" />
-              <div className="text-base font-bold text-green-400">Transmission Ready</div>
+              <div className="text-base font-bold text-green-400">Transmission Dispatched</div>
+              {receipt && (
+                <div className="px-3 py-1.5 bg-green-500/10 border border-green-500/30 rounded inline-block text-[11px] text-green-300 font-mono">
+                  REF: {receipt.id}
+                </div>
+              )}
               <p className="text-xs text-term-dim max-w-xs mx-auto">
-                Opening your email client to send message to {PORTFOLIO_DATA.personal.email}.
+                {receipt?.message || `Transmission confirmed for ${PORTFOLIO_DATA.personal.email}.`}
               </p>
               <button
-                onClick={() => setStatus('idle')}
-                className="text-xs text-term-accent underline mt-2 inline-block"
+                onClick={() => {
+                  setStatus('idle');
+                  setFormData({ name: '', email: '', message: '' });
+                }}
+                className="text-xs text-term-accent underline mt-2 inline-block font-semibold"
               >
                 Send another message
               </button>

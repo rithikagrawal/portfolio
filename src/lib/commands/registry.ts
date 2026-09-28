@@ -7,6 +7,8 @@ import {
   FSNode,
 } from '@/lib/filesystem';
 import { getNeofetchOutput } from './neofetch';
+import { getRecruiterBriefing } from './recruiter';
+import { askRithikAI } from './aiCopilot';
 import { useTerminalStore, ThemeType, GUISection } from '@/store/terminal';
 import { sound, SwitchProfile } from '@/lib/audio';
 import confetti from 'canvas-confetti';
@@ -76,7 +78,24 @@ AVAILABLE COMMANDS (type any command or click touch-chips below):
   mail              Open contact form dialog or mail client
   curl <url>        Simulate HTTP GET request
 
-[System & Audio Controls]
+[Executive & Technical Architecture]
+  recruiter         One-click executive briefing for hiring managers & recruiters
+  htop              Interactive real-time systems monitor & process loads
+  arch              Interactive system architecture visualizer (JioMeet & Power)
+  ask-rithik "q"    Interview Rithik's in-terminal AI career copilot
+
+[Interactive Tools & Terminal Apps]
+  nano <file>       Interactive text editor buffer inside the terminal (or 'vim')
+  guestbook         Global visitor endorsement ledger ('guestbook sign "msg"')
+  type-test         Terminal coding speed test (Monkeytype style with WPM)
+  adventure         SRE incident response multi-branch text RPG
+  radio [play|next] Procedural chiptune radio with dancing ASCII spectrum
+
+[3D Hardware & Audio Controls]
+  degauss           Discharge CRT magnetic degaussing coil (screen shake effect)
+  orbit / inspect   Toggle 360° 3D camera orbit to inspect rear chassis
+  monitor <model>   Swap monitor chassis ('amber-crt', 'ibm-5151', 'cyberpunk')
+  scene             Toggle 3D environment between space cosmos and retro desk
   theme <name>      Switch theme ('amber' [default], 'matrix', 'cyber', 'dracula')
   sound <on|off>    Toggle mechanical keyboard audio synthesizer
   sound switch <t>  Switch sound profile ('blue' [default], 'model-m', 'red', 'teletype')
@@ -85,7 +104,7 @@ AVAILABLE COMMANDS (type any command or click touch-chips below):
   history           List executed command history buffer
   echo <text>       Print text to standard output
 
-[Games & Easter Eggs]
+[Retro Games & Easter Eggs]
   snake             Play classic retro ASCII Snake inside the CRT!
   pong              Play retro ASCII Pong vs terminal CPU
   sudo hire-me      Trigger special recruitment celebration sequence
@@ -93,7 +112,6 @@ AVAILABLE COMMANDS (type any command or click touch-chips below):
   cowsay <message>  ASCII cow speaks your text
   fortune           Display random senior engineering aphorism
   sl                Run ASCII steam locomotive
-  vim / nano        Try opening an interactive text editor
 ================================================================================
 Tip: Use TAB for auto-completion and ↑/↓ keys for command history.
 `,
@@ -726,15 +744,284 @@ Routing directly to contact channel...
 `,
   }),
 
-  vim: () => ({
-    type: 'error',
-    content: 'Error: vim is running. Good luck finding your way out! Try :q! (or just use cat)',
+  vim: (ctx) => {
+    const file = ctx.args[0] || 'notes.txt';
+    const store = useTerminalStore.getState();
+    const targetPath = file.startsWith('/') ? file : store.cwd + '/' + file;
+    store.setActiveApp('nano', targetPath);
+    return {
+      type: 'system',
+      content: `Opening vim buffer for ${targetPath}...`,
+    };
+  },
+
+  nano: (ctx) => {
+    const file = ctx.args[0] || 'notes.txt';
+    const store = useTerminalStore.getState();
+    const targetPath = file.startsWith('/') ? file : store.cwd + '/' + file;
+    store.setActiveApp('nano', targetPath);
+    return {
+      type: 'system',
+      content: `Opening nano editor buffer for ${targetPath}...`,
+    };
+  },
+
+  recruiter: () => ({
+    type: 'ascii',
+    content: getRecruiterBriefing(),
   }),
 
-  nano: () => ({
-    type: 'error',
-    content: 'Error: nano is not installed. Real systems engineers use sed and cat.',
+  tldr: () => ({
+    type: 'ascii',
+    content: getRecruiterBriefing(),
   }),
+
+  htop: () => {
+    useTerminalStore.getState().setActiveApp('htop');
+    return {
+      type: 'system',
+      content: 'Starting interactive htop process monitor... (Press q or Esc to exit)',
+    };
+  },
+
+  top: () => {
+    useTerminalStore.getState().setActiveApp('htop');
+    return {
+      type: 'system',
+      content: 'Starting interactive htop process monitor... (Press q or Esc to exit)',
+    };
+  },
+
+  btop: () => {
+    useTerminalStore.getState().setActiveApp('htop');
+    return {
+      type: 'system',
+      content: 'Starting interactive htop process monitor... (Press q or Esc to exit)',
+    };
+  },
+
+  arch: () => {
+    useTerminalStore.getState().setActiveApp('arch');
+    return {
+      type: 'system',
+      content: 'Launching interactive system architecture visualizer... (Press q or Esc to exit)',
+    };
+  },
+
+  architecture: () => {
+    useTerminalStore.getState().setActiveApp('arch');
+    return {
+      type: 'system',
+      content: 'Launching interactive system architecture visualizer... (Press q or Esc to exit)',
+    };
+  },
+
+  'ask-rithik': (ctx) => {
+    const query = ctx.args.join(' ');
+    const res = askRithikAI(query);
+    return {
+      type: 'ascii',
+      content: `
+================================================================================
+[AI CAREER COPILOT — ${res.topic.toUpperCase()}]
+================================================================================
+${res.answer}
+--------------------------------------------------------------------------------
+Related Commands: ${res.relatedCommands.map((c) => `[${c}]`).join('  ')}
+================================================================================
+`,
+    };
+  },
+
+  ai: (ctx) => {
+    const query = ctx.args.join(' ');
+    const res = askRithikAI(query);
+    return {
+      type: 'ascii',
+      content: `
+================================================================================
+[AI CAREER COPILOT — ${res.topic.toUpperCase()}]
+================================================================================
+${res.answer}
+--------------------------------------------------------------------------------
+Related Commands: ${res.relatedCommands.map((c) => `[${c}]`).join('  ')}
+================================================================================
+`,
+    };
+  },
+
+  guestbook: (ctx) => {
+    if (ctx.args[0] === 'sign') {
+      const msg = ctx.args.slice(1).join(' ').replace(/^["']|["']$/g, '');
+      const name = (ctx.flags.name as string) || 'Visitor';
+      if (!msg) {
+        return {
+          type: 'error',
+          content: 'Usage: guestbook sign "<message>" --name="<Your Name>"',
+        };
+      }
+      try {
+        const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('term_guestbook') : null;
+        const list = stored ? JSON.parse(stored) : [];
+        list.unshift({
+          id: 'gb-' + Date.now().toString(36),
+          name,
+          role: 'Tech Recruiter / Engineer',
+          message: msg,
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        });
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('term_guestbook', JSON.stringify(list));
+        }
+        return {
+          type: 'success',
+          content: `✓ Recorded signature from ${name}: "${msg}"\nType 'guestbook' to view the full ledger.`,
+        };
+      } catch {
+        return {
+          type: 'error',
+          content: 'Failed to write to guestbook storage.',
+        };
+      }
+    }
+
+    useTerminalStore.getState().setActiveApp('guestbook');
+    return {
+      type: 'system',
+      content: 'Launching interactive Guestbook ledger... (Press q or Esc to exit)',
+    };
+  },
+
+  'type-test': () => {
+    useTerminalStore.getState().setActiveApp('type-test');
+    return {
+      type: 'system',
+      content: 'Starting Terminal Coding Speed Test... (Press q or Esc to exit)',
+    };
+  },
+
+  speed: () => {
+    useTerminalStore.getState().setActiveApp('type-test');
+    return {
+      type: 'system',
+      content: 'Starting Terminal Coding Speed Test... (Press q or Esc to exit)',
+    };
+  },
+
+  adventure: () => {
+    useTerminalStore.getState().setActiveApp('adventure');
+    return {
+      type: 'system',
+      content: 'Starting SRE Incident Response Text RPG... (Press q or Esc to exit)',
+    };
+  },
+
+  rpg: () => {
+    useTerminalStore.getState().setActiveApp('adventure');
+    return {
+      type: 'system',
+      content: 'Starting SRE Incident Response Text RPG... (Press q or Esc to exit)',
+    };
+  },
+
+  radio: (ctx) => {
+    if (ctx.args[0] === 'play' || ctx.args[0] === 'start') {
+      sound.startRadio(useTerminalStore.getState().radioTrackIndex);
+      useTerminalStore.setState({ isRadioPlaying: true });
+      return {
+        type: 'success',
+        content: 'Procedural chiptune radio started playing. Type "radio" for ASCII spectrum visualizer.',
+      };
+    }
+    if (ctx.args[0] === 'stop' || ctx.args[0] === 'pause') {
+      sound.stopRadio();
+      useTerminalStore.setState({ isRadioPlaying: false });
+      return {
+        type: 'system',
+        content: 'Procedural chiptune radio stopped.',
+      };
+    }
+    if (ctx.args[0] === 'next') {
+      const next = useTerminalStore.getState().nextRadioTrack();
+      sound.startRadio(next);
+      useTerminalStore.setState({ isRadioPlaying: true });
+      return {
+        type: 'success',
+        content: `Skipped to Track ${next + 1}.`,
+      };
+    }
+    useTerminalStore.getState().setActiveApp('radio');
+    return {
+      type: 'system',
+      content: 'Launching interactive Chiptune Radio & ASCII spectrum visualizer... (Press q or Esc to exit)',
+    };
+  },
+
+  lofi: () => {
+    useTerminalStore.getState().setActiveApp('radio');
+    return {
+      type: 'system',
+      content: 'Launching interactive Chiptune Radio & ASCII spectrum visualizer... (Press q or Esc to exit)',
+    };
+  },
+
+  degauss: () => {
+    useTerminalStore.getState().triggerDegauss();
+    return {
+      type: 'system',
+      content: 'CRT degaussing coil energized. High-voltage magnetic oscillation discharged.',
+    };
+  },
+
+  orbit: () => {
+    const isOrbit = useTerminalStore.getState().toggleOrbitMode();
+    return {
+      type: 'system',
+      content: isOrbit
+        ? '3D Orbit Mode ENABLED. Click and drag in the 3D scene to inspect the CRT monitor chassis in 360°.'
+        : '3D Orbit Mode DISABLED. Camera returned to default perspective.',
+    };
+  },
+
+  inspect: () => {
+    const isOrbit = useTerminalStore.getState().toggleOrbitMode();
+    return {
+      type: 'system',
+      content: isOrbit
+        ? '3D Orbit Mode ENABLED. Click and drag in the 3D scene to inspect the CRT monitor chassis in 360°.'
+        : '3D Orbit Mode DISABLED. Camera returned to default perspective.',
+    };
+  },
+
+  monitor: (ctx) => {
+    const model = ctx.args[0]?.toLowerCase();
+    if (!['amber-crt', 'ibm-5151', 'cyberpunk'].includes(model)) {
+      return {
+        type: 'error',
+        content: 'Usage: monitor <amber-crt | ibm-5151 | cyberpunk>\nCurrent model: ' + useTerminalStore.getState().monitorModel,
+      };
+    }
+    useTerminalStore.getState().setMonitorModel(model as any);
+    if (model === 'ibm-5151') {
+      useTerminalStore.getState().setTheme('matrix');
+    } else if (model === 'cyberpunk') {
+      useTerminalStore.getState().setTheme('cyber');
+    } else {
+      useTerminalStore.getState().setTheme('amber');
+    }
+    return {
+      type: 'success',
+      content: `Swapped 3D monitor chassis to [${model.toUpperCase()}].`,
+    };
+  },
+
+  scene: (ctx) => {
+    const next = useTerminalStore.getState().toggleSceneMode();
+    return {
+      type: 'success',
+      content: `Swapped 3D environment scene to: [${next.toUpperCase()}].`,
+    };
+  },
 
   rm: (ctx) => {
     if (ctx.args.includes('-rf') || ctx.args.includes('/') || ctx.args.includes('*')) {
@@ -754,3 +1041,4 @@ Routing directly to contact channel...
     content: 'There is no exit from this terminal. You are inside Rithik’s engineering mind now.',
   }),
 };
+

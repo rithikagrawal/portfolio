@@ -6,6 +6,13 @@ import { sound, SwitchProfile } from '@/lib/audio';
 import { BootSequence } from './BootSequence';
 import { SnakeGame } from './SnakeGame';
 import { PongGame } from './PongGame';
+import { HtopView } from './HtopView';
+import { ArchVisualizer } from './ArchVisualizer';
+import { NanoEditor } from './NanoEditor';
+import { GuestbookView } from './GuestbookView';
+import { TypeTestGame } from './TypeTestGame';
+import { AdventureGame } from './AdventureGame';
+import { RadioView } from './RadioView';
 import {
   Volume2,
   VolumeX,
@@ -15,7 +22,7 @@ import {
   Sparkles,
   Power,
   Sliders,
-  Gamepad2,
+  Zap,
 } from 'lucide-react';
 
 export function Terminal() {
@@ -28,8 +35,9 @@ export function Terminal() {
     viewMode,
     isBooting,
     hasBooted,
-    activeGame,
+    activeApp,
     isPoweredOn,
+    isDegaussing,
     addOutput,
     recordCommand,
     navigateHistory,
@@ -39,8 +47,9 @@ export function Terminal() {
     setViewMode,
     setBooting,
     setHasBooted,
-    setActiveGame,
+    setActiveApp,
     togglePower,
+    triggerDegauss,
   } = useTerminalStore();
 
   const [input, setInput] = useState('');
@@ -72,19 +81,19 @@ export function Terminal() {
     }
   }, [isPoweredOn]);
 
-  // Auto-focus input on click anywhere in terminal when not in game
+  // Auto-focus input on click anywhere in terminal when not in game/app
   const handleContainerClick = () => {
-    if (!activeGame && isPoweredOn) {
+    if (!activeApp && isPoweredOn) {
       inputRef.current?.focus();
     }
   };
 
   // Scroll to bottom on updates
   useEffect(() => {
-    if (scrollRef.current && !activeGame) {
+    if (scrollRef.current && !activeApp) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [outputs, hasBooted, suggestions, activeGame]);
+  }, [outputs, hasBooted, suggestions, activeApp]);
 
   // Initial welcome greeting if boot done
   const handleBootComplete = useCallback(() => {
@@ -137,7 +146,7 @@ export function Terminal() {
   }, [input, cwd, addOutput, recordCommand]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (activeGame) return;
+    if (activeApp) return;
 
     if (!['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) {
       sound.playKeypress();
@@ -249,7 +258,9 @@ export function Terminal() {
   return (
     <div
       onClick={handleContainerClick}
-      className={`relative flex flex-col h-full w-full bg-[#0a0800]/95 text-term-text font-mono border border-term-border rounded-lg shadow-2xl overflow-hidden crt-curved-frame backdrop-blur-md ${animClass}`}
+      className={`relative flex flex-col h-full w-full bg-[#0a0800]/95 text-term-text font-mono border border-term-border rounded-lg shadow-2xl overflow-hidden crt-curved-frame backdrop-blur-md ${
+        isDegaussing ? 'animate-degauss' : ''
+      } ${animClass}`}
     >
       {/* CRT Scanline and Vignette overlay */}
       <div className="crt-overlay" />
@@ -264,7 +275,7 @@ export function Terminal() {
           </div>
           <span className="ml-2 font-bold tracking-wider text-term-accent flex items-center gap-1.5">
             <TerminalIcon className="w-3.5 h-3.5" />
-            rithik@portfolio: {promptPath} {activeGame ? `[GAME: ${activeGame.toUpperCase()}]` : '(bash)'}
+            rithik@portfolio: {promptPath} {activeApp ? `[APP: ${activeApp.toUpperCase()}]` : '(bash)'}
           </span>
         </div>
 
@@ -280,6 +291,18 @@ export function Terminal() {
           >
             <Sliders className="w-3 h-3 text-term-accent" />
             <span className="uppercase font-semibold">{switchProfile}</span>
+          </button>
+
+          {/* CRT Degauss magnetic burst */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              triggerDegauss();
+            }}
+            title="CRT Degauss Magnetic Burst (or type degauss)"
+            className="p-1 rounded hover:bg-term-subtle transition-colors text-term-dim hover:text-term-accent"
+          >
+            <Zap className="w-3.5 h-3.5" />
           </button>
 
           {/* Sound toggle button */}
@@ -338,17 +361,31 @@ export function Terminal() {
         </div>
       </div>
 
-      {/* Terminal Screen Body or Active Game */}
+      {/* Terminal Screen Body or Active Game / App */}
       <div
         ref={scrollRef}
         className="relative z-10 flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-2 text-xs sm:text-sm font-mono leading-relaxed"
       >
         {!hasBooted ? (
           <BootSequence onComplete={handleBootComplete} />
-        ) : activeGame === 'snake' ? (
+        ) : activeApp === 'snake' ? (
           <SnakeGame />
-        ) : activeGame === 'pong' ? (
+        ) : activeApp === 'pong' ? (
           <PongGame />
+        ) : activeApp === 'htop' ? (
+          <HtopView />
+        ) : activeApp === 'arch' ? (
+          <ArchVisualizer />
+        ) : activeApp === 'nano' ? (
+          <NanoEditor />
+        ) : activeApp === 'guestbook' ? (
+          <GuestbookView />
+        ) : activeApp === 'type-test' ? (
+          <TypeTestGame />
+        ) : activeApp === 'adventure' ? (
+          <AdventureGame />
+        ) : activeApp === 'radio' ? (
+          <RadioView />
         ) : (
           <>
             {/* Output History */}
@@ -426,12 +463,21 @@ export function Terminal() {
       </div>
 
       {/* Touch-Friendly Quick Command Chips */}
-      {hasBooted && !activeGame && (
+      {hasBooted && !activeApp && (
         <div className="relative z-30 px-3 py-2 bg-black/80 border-t border-term-border/70 flex items-center gap-1.5 overflow-x-auto text-[11px] scrollbar-none">
           <span className="text-term-dim uppercase text-[10px] tracking-wider font-bold whitespace-nowrap flex items-center gap-1 mr-1">
             <Sparkles className="w-2.5 h-2.5" /> Quick:
           </span>
           {[
+            { label: 'recruiter', cmd: 'recruiter' },
+            { label: 'htop', cmd: 'htop' },
+            { label: 'arch', cmd: 'arch' },
+            { label: 'ask-ai', cmd: 'ask-rithik "How did you scale JioMeet to 15M users?"' },
+            { label: 'type-test', cmd: 'type-test' },
+            { label: 'guestbook', cmd: 'guestbook' },
+            { label: 'radio', cmd: 'radio' },
+            { label: 'adventure', cmd: 'adventure' },
+            { label: 'degauss', cmd: 'degauss' },
             { label: 'neofetch', cmd: 'neofetch' },
             { label: 'experience', cmd: 'cd experience' },
             { label: 'projects', cmd: 'cd projects' },
@@ -441,7 +487,6 @@ export function Terminal() {
             { label: 'pong', cmd: 'pong' },
             { label: 'contact', cmd: 'cd contact' },
             { label: 'help', cmd: 'help' },
-            { label: 'sudo hire-me', cmd: 'sudo hire-me' },
             { label: 'clear', cmd: 'clear' },
           ].map((item) => (
             <button

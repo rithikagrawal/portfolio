@@ -423,6 +423,84 @@ class SoundEngine {
       // Ignore
     }
   }
+
+  // Procedural Chiptune Radio Engine
+  private radioInterval: ReturnType<typeof setInterval> | null = null;
+  public isRadioRunning: boolean = false;
+  public radioTrackIndex: number = 0;
+
+  private TRACK_FREQS = [
+    // Track 1: Amber Waves (A minor arpeggio)
+    [220, 261.63, 329.63, 392.00, 440.00, 523.25, 392.00, 329.63],
+    // Track 2: Phosphor Dream (C major 7th)
+    [261.63, 329.63, 392.00, 493.88, 523.25, 392.00, 329.63, 261.63],
+    // Track 3: Silicon Highway (G minor synthwave)
+    [196.00, 233.08, 293.66, 349.23, 392.00, 466.16, 392.00, 293.66],
+    // Track 4: Midnight Terminal (E minor ambient)
+    [164.81, 196.00, 246.94, 293.66, 329.63, 246.94, 196.00, 164.81],
+  ];
+
+  public startRadio(trackIdx: number = 0) {
+    if (!this.enabled) return;
+    this.stopRadio();
+    this.initContext();
+    if (!this.ctx) return;
+
+    this.isRadioRunning = true;
+    this.radioTrackIndex = trackIdx % this.TRACK_FREQS.length;
+    let step = 0;
+
+    const pattern = this.TRACK_FREQS[this.radioTrackIndex];
+
+    this.radioInterval = setInterval(() => {
+      if (!this.isRadioRunning || !this.enabled || !this.ctx) return;
+      try {
+        const t = this.ctx.currentTime;
+        const freq = pattern[step % pattern.length];
+        step++;
+
+        // Lead note
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = step % 4 === 0 ? 'square' : 'triangle';
+        osc.frequency.setValueAtTime(freq, t);
+
+        gain.gain.setValueAtTime(0.018, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(t);
+        osc.stop(t + 0.25);
+
+        // Sub bass note every 4 steps
+        if (step % 4 === 1) {
+          const bass = this.ctx.createOscillator();
+          const bassGain = this.ctx.createGain();
+          bass.type = 'sine';
+          bass.frequency.setValueAtTime(freq / 2, t);
+          bassGain.gain.setValueAtTime(0.03, t);
+          bassGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+          bass.connect(bassGain);
+          bassGain.connect(this.ctx.destination);
+          bass.start(t);
+          bass.stop(t + 0.46);
+        }
+      } catch {
+        // Ignore audio glitch
+      }
+    }, 220);
+  }
+
+  public stopRadio() {
+    this.isRadioRunning = false;
+    if (this.radioInterval) {
+      clearInterval(this.radioInterval);
+      this.radioInterval = null;
+    }
+  }
 }
+
 
 export const sound = new SoundEngine();

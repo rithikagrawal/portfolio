@@ -12,9 +12,38 @@ export function CRTMonitor() {
   const viewMode = useTerminalStore((s) => s.viewMode);
   const isPoweredOn = useTerminalStore((s) => s.isPoweredOn);
   const togglePower = useTerminalStore((s) => s.togglePower);
+  const triggerDegauss = useTerminalStore((s) => s.triggerDegauss);
+  const isOrbitMode = useTerminalStore((s) => s.isOrbitMode);
+  const monitorModel = useTerminalStore((s) => s.monitorModel);
+
+  // Monitor chassis palette based on active model
+  const chassisColor =
+    monitorModel === 'ibm-5151'
+      ? '#c8b99d'
+      : monitorModel === 'cyberpunk'
+      ? '#080c14'
+      : '#12100d';
+
+  const lipColor =
+    monitorModel === 'ibm-5151'
+      ? '#b5a589'
+      : monitorModel === 'cyberpunk'
+      ? '#0f172a'
+      : '#181510';
+
+  const badgeColor =
+    monitorModel === 'ibm-5151'
+      ? '#00ff41'
+      : monitorModel === 'cyberpunk'
+      ? '#00d4ff'
+      : '#ffb000';
 
   useFrame(({ clock, pointer }) => {
     if (!monitorRef.current) return;
+    // Disable idle float/tilt when user is actively orbiting around in 360°
+    if (isOrbitMode) {
+      return;
+    }
     const t = clock.getElapsedTime();
 
     // Gentle organic float
@@ -29,16 +58,44 @@ export function CRTMonitor() {
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
-      <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.3}>
+      <Float speed={isOrbitMode ? 0 : 1.2} rotationIntensity={isOrbitMode ? 0 : 0.15} floatIntensity={isOrbitMode ? 0 : 0.3}>
         <group ref={monitorRef}>
           {/* Main Monitor Bezel / Enclosure */}
           <mesh position={[0, 0, -0.2]}>
             <boxGeometry args={[4.8, 3.4, 1.2]} />
             <meshStandardMaterial
-              color="#12100d"
+              color={chassisColor}
               roughness={0.7}
               metalness={0.3}
             />
+          </mesh>
+
+          {/* Rear CRT Cone Enclosure for 360° Orbit Inspect */}
+          <mesh position={[0, 0, -0.9]} rotation={[-Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.7, 1.8, 1.2, 16]} />
+            <meshStandardMaterial color={chassisColor} roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 0, -1.6]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.35, 0.35, 0.5, 16]} />
+            <meshStandardMaterial color="#080705" roughness={0.7} />
+          </mesh>
+
+          {/* Rear Metal Specification Badge */}
+          <mesh position={[0, -0.2, -0.81]} rotation={[0, Math.PI, 0]}>
+            <planeGeometry args={[1.2, 0.5]} />
+            <meshStandardMaterial color="#777" metalness={0.8} roughness={0.3} />
+          </mesh>
+
+          {/* Rear DB-15 / VGA Video Port */}
+          <mesh position={[-0.8, -0.4, -0.82]}>
+            <boxGeometry args={[0.3, 0.16, 0.06]} />
+            <meshStandardMaterial color="#1e3a8a" roughness={0.5} />
+          </mesh>
+
+          {/* Rear AC Power Cable Receptacle */}
+          <mesh position={[0.8, -0.4, -0.82]}>
+            <boxGeometry args={[0.24, 0.18, 0.06]} />
+            <meshStandardMaterial color="#050505" roughness={0.8} />
           </mesh>
 
           {/* Top Cooling Ventilation Slots */}
@@ -55,7 +112,7 @@ export function CRTMonitor() {
           <mesh position={[0, 0, 0.35]}>
             <boxGeometry args={[4.6, 3.2, 0.1]} />
             <meshStandardMaterial
-              color="#181510"
+              color={lipColor}
               roughness={0.6}
               metalness={0.4}
             />
@@ -86,11 +143,37 @@ export function CRTMonitor() {
           <mesh position={[0, -1.5, 0.41]}>
             <planeGeometry args={[0.8, 0.12]} />
             <meshStandardMaterial
-              color={isPoweredOn ? '#ffb000' : '#554000'}
-              emissive={isPoweredOn ? '#ffb000' : '#221500'}
-              emissiveIntensity={isPoweredOn ? 0.4 : 0.05}
+              color={isPoweredOn ? badgeColor : '#333333'}
+              emissive={isPoweredOn ? badgeColor : '#111111'}
+              emissiveIntensity={isPoweredOn ? 0.5 : 0.05}
             />
           </mesh>
+
+          {/* Interactive 3D Degauss Push-Button */}
+          <group
+            position={[0.55, -1.5, 0.41]}
+            onClick={(e) => {
+              e.stopPropagation();
+              triggerDegauss();
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation();
+              document.body.style.cursor = 'pointer';
+            }}
+            onPointerOut={(e) => {
+              e.stopPropagation();
+              document.body.style.cursor = 'auto';
+            }}
+          >
+            <mesh position={[0, 0, 0]}>
+              <boxGeometry args={[0.18, 0.18, 0.03]} />
+              <meshStandardMaterial color="#0c0b09" roughness={0.7} />
+            </mesh>
+            <mesh position={[0, 0, 0.02]} rotation={[Math.PI / 2, 0, 0]}>
+              <cylinderGeometry args={[0.05, 0.05, 0.03, 16]} />
+              <meshStandardMaterial color="#d97706" emissive="#d97706" emissiveIntensity={0.2} roughness={0.4} />
+            </mesh>
+          </group>
 
           {/* Retro Dial Knobs on Bezel */}
           <mesh position={[0.9, -1.5, 0.43]} rotation={[Math.PI / 2, 0, 0]}>

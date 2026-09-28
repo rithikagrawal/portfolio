@@ -280,7 +280,44 @@ export const getNodeByPath = (path: string): FSNode | null => {
   return current;
 };
 
-// Generate ASCII tree
+// Write or update file at a given absolute path
+export const writeFileToFS = (path: string, content: string): boolean => {
+  const norm = normalizePath(path);
+  const segments = norm.replace('/home/rithik/', '').split('/').filter(Boolean);
+  if (segments.length === 0) return false;
+
+  const fileName = segments.pop()!;
+  let current: FSNode = virtualFS;
+
+  for (const segment of segments) {
+    if (!current.children) current.children = {};
+    if (!current.children[segment]) {
+      current.children[segment] = {
+        name: segment,
+        type: 'dir',
+        path: current.path + '/' + segment,
+        permissions: 'drwxr-xr-x',
+        updatedAt: new Date().toISOString().split('T')[0],
+        children: {},
+      };
+    }
+    current = current.children[segment];
+  }
+
+  if (!current.children) current.children = {};
+  current.children[fileName] = {
+    name: fileName,
+    type: 'file',
+    path: norm,
+    permissions: '-rw-r--r--',
+    size: content.length,
+    updatedAt: new Date().toISOString().split('T')[0],
+    content,
+  };
+
+  return true;
+};
+
 export const generateTree = (node: FSNode, prefix = ''): string[] => {
   if (node.type !== 'dir' || !node.children) {
     return [prefix + node.name];

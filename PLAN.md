@@ -170,55 +170,78 @@ The portfolio data structure behaves like a genuine Unix filesystem:
 ## 7. Execution Roadmap (Phased Plan)
 
 ```mermaid
-flowchart LR
-    P1["Phase 1: Next.js Foundation & Assets"]
-    P2["Phase 2: Virtual FS & Command Engine"]
-    P3["Phase 3: 3D CRT & Canvas Shader"]
-    P4["Phase 4: Web Audio Synth & Terminal UI"]
-    P5["Phase 5: GUI Section Overlays"]
-    P6["Phase 6: Polish, Verification & Deployment"]
+flowchart TD
+    subgraph Completed ["Phase 1 - 6 (Completed & Verified)"]
+        C1["Next.js Foundation & Master Resume"]
+        C2["Virtual FS & 40+ Command Engine"]
+        C3["3D CRT Monitor & Shaders"]
+        C4["Procedural Audio & Mechanical Switch Profiles"]
+        C5["Playable ASCII Games (Snake, Pong)"]
+        C6["CRT Phosphor Collapse & 3D Bezel Controls"]
+    end
 
-    P1 --> P2 --> P3 --> P4 --> P5 --> P6
+    subgraph Expansion ["Next Phases: Interactive Suite & 3D Immersion"]
+        E1["Phase 7: Recruiter Suite (recruiter, htop, arch, ask-rithik, Contact API)"]
+        E2["Phase 8: Terminal Tools & Games (nano/vim, guestbook, type-test, adventure)"]
+        E3["Phase 9: Audio Chiptune Radio & ASCII Spectrum Visualizer (radio)"]
+        E4["Phase 10: 3D Hardware, Degauss, Orbit & Desk Environment (degauss, orbit, monitor, scene)"]
+    end
+
+    Completed --> Expansion
 ```
 
-### Phase 1: Project Setup & Migration Foundation
-- Scaffold Next.js 14+ with App router, TypeScript, and Tailwind CSS.
-- Port data models (`Experience`, `Project`, `Skill`, `SocialLink`) from existing Angular service into `/src/data/portfolio.ts`.
-- Copy master resume from `/Users/rithikagrawal/Development/Projects/agent/master_resume.pdf` to `/public/master_resume.pdf`.
-- Set up JetBrains Mono variable typography and theme CSS variable architecture.
+### Phase 7: Recruiter & Systems Architecture Suite
+1. **`recruiter` / `tldr` Executive Briefing:**
+   - One-click executive summary tailored for engineering managers and recruiters.
+   - Core value proposition, verified scale metrics, direct resume download, interview scheduler, and email actions.
+2. **`htop` Real-Time Systems Monitor:**
+   - Fullscreen live ASCII process monitor with dynamic fluctuating CPU/Memory load bars.
+   - Simulated microservices: `fastapi-core`, `kafka-stream-consumer`, `power-financial-engine`, `postgres-pool`.
+   - Interactive commands: `q` to quit, `k` to kill a process with humorous error handling.
+3. **`arch` Interactive System Architecture Visualizer:**
+   - ASCII visual block diagrams of JioMeet (15M+ users) real-time media/signaling infra and Power Financial Wellness multi-region setup.
+   - Interactive simulation modes: traffic spike, worker failure, automatic failover.
+4. **`ask-rithik` In-Terminal AI Career Copilot:**
+   - Natural language Q&A engine trained on Rithik's complete resume and engineering career.
+   - Streams answers line-by-line directly on the CRT screen.
+5. **Live Contact Transmission API (`/api/contact`):**
+   - Server-side Next.js route handling transmission requests with validation and feedback in `ContactView.tsx`.
 
-### Phase 2: Virtual Filesystem & Command Engine
-- Build recursive virtual filesystem tree with standard file attributes.
-- Implement command parser (tokenizer, flags, quoted strings).
-- Create 40+ command handlers with full help manuals and formatted tables.
-- Implement tab-completion dictionary and command history stack.
+### Phase 8: Terminal Interactive Tools & Story Games
+6. **`nano` / `vim` In-Terminal Text Editor:**
+   - Interactive editor buffer inside the CRT terminal.
+   - Supports creating and editing files in `/home/rithik`, with status bar and `:wq` / `Ctrl+O` / `Ctrl+X` save-and-exit commands.
+7. **`guestbook` Global Signboard:**
+   - Terminal guestbook where visitors and recruiters can sign messages (`guestbook sign "Loved the 3D CRT!" --name="Alex"`).
+   - Displays feed of visitor endorsements with persistent storage.
+8. **`type-test` Terminal Coding Speed Test:**
+   - Monkeytype-style typing test typing real Python/TypeScript backend snippets against a timer.
+   - Calculates WPM, accuracy %, and shows rating comparisons.
+9. **`adventure` "A Day in Production" SRE Outage RPG:**
+   - Interactive multi-branch text adventure game resolving a 2:00 AM production incident (Kafka partition lag, DB deadlocks, pod scaling).
 
-### Phase 3: 3D CRT Monitor & Shader Environment
-- Implement Three.js canvas with ambient space environment (stars, subtle perspective grid).
-- Construct 3D CRT monitor geometry with stand, screen bezel, and glass mesh.
-- Integrate CRT post-processing effects (barrel distortion, scanline overlay, bloom, RGB split).
-- Project live interactive HTML terminal onto the 3D screen via `@react-three/drei` `<Html transform>`.
+### Phase 9: Audio Chiptune Radio & Spectrum Visualizer
+10. **`radio` / `lofi` Chiptune Synthesizer & Spectrum Analyzer:**
+    - Procedural 8-bit multi-track audio generator using Web Audio API oscillators.
+    - Real-time ASCII audio spectrum visualizer (inspired by `cava`) dancing across the terminal.
+    - Play, pause, next track, and volume controls.
 
-### Phase 4: Audio Engine & Interactive Shell
-- Build procedural Web Audio API sound synthesizer for keyclicks, backspace, enter, and boot chime.
-- Implement boot sequence animation simulating BIOS/kernel initialization.
-- Construct responsive terminal prompt with live caret, ANSI color rendering, and auto-scroll.
-
-### Phase 5: Terminal-Themed GUI Showcase Sections
-- Create visual terminal-card views for projects, experience timeline, skills matrix, and contact form.
-- Implement smooth camera transitions between terminal-focused view and expanded showcase mode.
-- Add mobile bottom HUD with touch-friendly command quick-actions.
-
-### Phase 6: Performance, Easter Eggs & Netlify Verification
-- Add easter eggs (`matrix` canvas rain, `cowsay`, `sl` train, `sudo hire-me`).
-- Test Lighthouse performance, ensure fallback for devices with reduced WebGL capabilities.
-- Verify production build (`npm run build`) and deployment readiness.
+### Phase 10: 3D Hardware, Degauss, Orbit & Desk Environment
+11. **CRT Degauss Magnetic Burst (`degauss`):**
+    - Bezel button and CLI command triggering violent CRT coil wobble, chromatic aberration flash, and deep electromagnetic hum.
+12. **3D Camera Orbit & Teardown Mode (`orbit` / `inspect`):**
+    - Free 360° camera rotation around the 3D monitor chassis to inspect rear cooling vents, power cable, serial badge, and VGA port.
+13. **Vintage Monitor Model Swapper (`monitor <model>`):**
+    - Switch chassis styling between IBM 5151 Green, Amber CRT, and Cyberpunk glass.
+14. **3D Desk & Room Scene Mode (`scene toggle`):**
+    - Toggle between floating cosmos mode and a 3D retro desk environment with wooden desk, coffee mug, and desk lamp.
 
 ---
 
 ## 8. Verification & Acceptance Criteria
 - **Build Quality:** Zero TypeScript errors, zero lint warnings, fast Next.js production bundle.
-- **Command Robustness:** All 40+ commands yield accurate output; invalid commands fail gracefully.
+- **Command Robustness:** All commands yield accurate output; invalid commands fail gracefully.
 - **3D Performance:** Stable 60 FPS animation on desktop; graceful high-performance fallback on mobile.
-- **Audio Authenticity:** Crisp mechanical clicks on keystroke without latency or audio clipping; toggleable with `sound off`.
+- **Audio Authenticity:** Procedural audio synthesis without external media latency or clipping; toggleable with `sound off`.
 - **Content Accuracy:** Accurate reflection of 4+ years experience, Jio Platforms (15M+ users), Power Financial Wellness, and verified projects.
+
