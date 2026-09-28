@@ -8,7 +8,7 @@ import {
 } from '@/lib/filesystem';
 import { getNeofetchOutput } from './neofetch';
 import { useTerminalStore, ThemeType, GUISection } from '@/store/terminal';
-import { sound } from '@/lib/audio';
+import { sound, SwitchProfile } from '@/lib/audio';
 import confetti from 'canvas-confetti';
 
 export interface CommandContext {
@@ -79,11 +79,15 @@ AVAILABLE COMMANDS (type any command or click touch-chips below):
 [System & Audio Controls]
   theme <name>      Switch theme ('amber' [default], 'matrix', 'cyber', 'dracula')
   sound <on|off>    Toggle mechanical keyboard audio synthesizer
+  sound switch <t>  Switch sound profile ('blue' [default], 'model-m', 'red', 'teletype')
+  power             Toggle CRT screen power collapse effect
   clear             Clear terminal screen history (or Ctrl+L)
   history           List executed command history buffer
   echo <text>       Print text to standard output
 
-[Easter Eggs & Fun]
+[Games & Easter Eggs]
+  snake             Play classic retro ASCII Snake inside the CRT!
+  pong              Play retro ASCII Pong vs terminal CPU
   sudo hire-me      Trigger special recruitment celebration sequence
   matrix            Start digital rain canvas animation
   cowsay <message>  ASCII cow speaks your text
@@ -574,6 +578,21 @@ cache-control: public, max-age=3600
   sound: (ctx) => {
     const store = useTerminalStore.getState();
     const arg = (ctx.args[0] || '').toLowerCase();
+    const subArg = (ctx.args[1] || '').toLowerCase() as SwitchProfile;
+
+    if (arg === 'switch' || arg === 'profile') {
+      if (['blue', 'model-m', 'red', 'teletype'].includes(subArg)) {
+        store.setSwitchProfile(subArg);
+        return {
+          type: 'success',
+          content: `Mechanical switch profile set to [${subArg.toUpperCase()}]. Tactile feedback re-calibrated.`,
+        };
+      }
+      return {
+        type: 'system',
+        content: `Current switch profile: [${store.switchProfile.toUpperCase()}].\nAvailable profiles: 'blue' (tactile click), 'model-m' (IBM spring solenoid), 'red' (linear soft), 'teletype' (metallic punch).\nUsage: 'sound switch <profile>'`,
+      };
+    }
 
     if (arg === 'on') {
       if (!store.soundEnabled) store.toggleSound();
@@ -591,7 +610,31 @@ cache-control: public, max-age=3600
     if (current) sound.playKeypress();
     return {
       type: 'system',
-      content: `Audio synthesizer is now [${current ? 'ENABLED' : 'MUTED'}].`,
+      content: `Audio synthesizer is now [${current ? 'ENABLED' : 'MUTED'}]. Profile: [${store.switchProfile.toUpperCase()}]. Type 'sound switch <name>' to change switch type.`,
+    };
+  },
+
+  power: () => {
+    useTerminalStore.getState().togglePower();
+    return {
+      type: 'system',
+      content: 'CRT monitor power state toggled.',
+    };
+  },
+
+  snake: () => {
+    useTerminalStore.getState().setActiveGame('snake');
+    return {
+      type: 'system',
+      content: 'Starting ASCII Snake... Use Arrow Keys / WASD to move. Press [Q] or [Esc] to exit.',
+    };
+  },
+
+  pong: () => {
+    useTerminalStore.getState().setActiveGame('pong');
+    return {
+      type: 'system',
+      content: 'Starting ASCII Pong... Use Arrow Up/Down or W/S to move paddle. Press [Q] or [Esc] to exit.',
     };
   },
 

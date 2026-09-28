@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { SwitchProfile, sound } from '@/lib/audio';
 
 export type OutputType = 'input' | 'text' | 'error' | 'success' | 'ascii' | 'table' | 'system' | 'custom';
 
@@ -13,6 +14,7 @@ export interface TerminalOutputItem {
 export type ThemeType = 'amber' | 'matrix' | 'cyber' | 'dracula';
 export type ViewMode = 'terminal' | 'gui';
 export type GUISection = 'experience' | 'projects' | 'skills' | 'contact' | null;
+export type GameType = 'snake' | 'pong' | null;
 
 interface TerminalState {
   outputs: TerminalOutputItem[];
@@ -21,11 +23,14 @@ interface TerminalState {
   cwd: string;
   theme: ThemeType;
   soundEnabled: boolean;
+  switchProfile: SwitchProfile;
   viewMode: ViewMode;
   activeSection: GUISection;
   isBooting: boolean;
   hasBooted: boolean;
   isMatrixActive: boolean;
+  activeGame: GameType;
+  isPoweredOn: boolean;
 
   // Actions
   addOutput: (item: Omit<TerminalOutputItem, 'id' | 'timestamp'>) => void;
@@ -35,10 +40,13 @@ interface TerminalState {
   setCwd: (path: string) => void;
   setTheme: (theme: ThemeType) => void;
   toggleSound: () => boolean;
+  setSwitchProfile: (profile: SwitchProfile) => void;
   setViewMode: (mode: ViewMode, section?: GUISection) => void;
   setBooting: (booting: boolean) => void;
   setHasBooted: (booted: boolean) => void;
   setMatrixActive: (active: boolean) => void;
+  setActiveGame: (game: GameType) => void;
+  togglePower: () => void;
 }
 
 export const useTerminalStore = create<TerminalState>((set, get) => ({
@@ -48,11 +56,14 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
   cwd: '/home/rithik',
   theme: 'amber',
   soundEnabled: true,
+  switchProfile: 'blue',
   viewMode: 'terminal',
   activeSection: null,
   isBooting: false,
   hasBooted: false,
   isMatrixActive: false,
+  activeGame: null,
+  isPoweredOn: true,
 
   addOutput: (item) => {
     const newItem: TerminalOutputItem = {
@@ -124,6 +135,11 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
     return next;
   },
 
+  setSwitchProfile: (profile) => {
+    sound.setSwitchProfile(profile);
+    set({ switchProfile: profile });
+  },
+
   setViewMode: (mode, section = null) => {
     set({ viewMode: mode, activeSection: section });
   },
@@ -131,4 +147,15 @@ export const useTerminalStore = create<TerminalState>((set, get) => ({
   setBooting: (booting) => set({ isBooting: booting }),
   setHasBooted: (booted) => set({ hasBooted: booted }),
   setMatrixActive: (active) => set({ isMatrixActive: active }),
+  setActiveGame: (game) => set({ activeGame: game }),
+
+  togglePower: () => {
+    const next = !get().isPoweredOn;
+    if (next) {
+      sound.playPowerUp();
+    } else {
+      sound.playPowerDown();
+    }
+    set({ isPoweredOn: next });
+  },
 }));

@@ -132,3 +132,62 @@ body {
 .animate-caret {
   animation: blink-caret 1s step-end infinite;
 }
+
+/* CRT Turn-off Phosphor Collapse Animation */
+@keyframes crt-turn-off {
+  0% {
+    transform: scale(1, 1);
+    filter: brightness(1) contrast(1);
+    opacity: 1;
+  }
+  45% {
+    transform: scale(1, 0.003);
+    filter: brightness(3.5) contrast(2);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.06, 0.003);
+    filter: brightness(6) contrast(3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(0, 0);
+    filter: brightness(8);
+    opacity: 0;
+  }
+}
+
+/* CRT Turn-on Bloom / Expansion Animation */
+@keyframes crt-turn-on {
+  0% {
+    transform: scale(0.01, 0.004);
+    filter: brightness(5);
+    opacity: 0.3;
+  }
+  35% {
+    transform: scale(1, 0.004);
+    filter: brightness(3.5);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1, 1.03);
+    filter: brightness(1.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1, 1);
+    filter: brightness(1);
+    opacity: 1;
+  }
+}
+
+.animate-crt-off {
+  animation: crt-turn-off 0.42s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  transform-origin: center center;
+}
+
+.animate-crt-on {
+  animation: crt-turn-on 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  transform-origin: center center;
+}
+

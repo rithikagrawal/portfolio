@@ -2,9 +2,21 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTerminalStore } from '@/store/terminal';
 import { executeCommand, getCompletions } from '@/lib/commands';
-import { sound } from '@/lib/audio';
+import { sound, SwitchProfile } from '@/lib/audio';
 import { BootSequence } from './BootSequence';
-import { Volume2, VolumeX, Palette, Layers, Terminal as TerminalIcon, Sparkles } from 'lucide-react';
+import { SnakeGame } from './SnakeGame';
+import { PongGame } from './PongGame';
+import {
+  Volume2,
+  VolumeX,
+  Palette,
+  Layers,
+  Terminal as TerminalIcon,
+  Sparkles,
+  Power,
+  Sliders,
+  Gamepad2,
+} from 'lucide-react';
 
 export function Terminal() {
   const {
@@ -12,41 +24,72 @@ export function Terminal() {
     cwd,
     theme,
     soundEnabled,
+    switchProfile,
     viewMode,
     isBooting,
     hasBooted,
+    activeGame,
+    isPoweredOn,
     addOutput,
     recordCommand,
     navigateHistory,
     setTheme,
     toggleSound,
+    setSwitchProfile,
     setViewMode,
     setBooting,
     setHasBooted,
+    setActiveGame,
+    togglePower,
   } = useTerminalStore();
 
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [powerAnim, setPowerAnim] = useState<'on' | 'collapsing' | 'off' | 'powering-up'>(
+    isPoweredOn ? 'on' : 'off'
+  );
+  const prevPowerRef = useRef(isPoweredOn);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-focus input on click anywhere in terminal
+  // Sync CRT power collapse and turn-on bloom animation
+  useEffect(() => {
+    if (prevPowerRef.current !== isPoweredOn) {
+      prevPowerRef.current = isPoweredOn;
+      if (!isPoweredOn) {
+        setPowerAnim('collapsing');
+        const timer = setTimeout(() => {
+          setPowerAnim('off');
+        }, 420);
+        return () => clearTimeout(timer);
+      } else {
+        setPowerAnim('powering-up');
+        const timer = setTimeout(() => {
+          setPowerAnim('on');
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isPoweredOn]);
+
+  // Auto-focus input on click anywhere in terminal when not in game
   const handleContainerClick = () => {
-    inputRef.current?.focus();
+    if (!activeGame && isPoweredOn) {
+      inputRef.current?.focus();
+    }
   };
 
   // Scroll to bottom on updates
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && !activeGame) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [outputs, hasBooted, suggestions]);
+  }, [outputs, hasBooted, suggestions, activeGame]);
 
   // Initial welcome greeting if boot done
   const handleBootComplete = useCallback(() => {
     setHasBooted(true);
     setBooting(false);
-    // Initial welcome banner
     addOutput({
       type: 'ascii',
       content: `
@@ -54,10 +97,10 @@ export function Terminal() {
   PortfolioOS 2.0 (x86_64) — Amber CRT Edition
   Session initialized for rithik@portfolio. All services 100% operational.
   Type 'help' to inspect command list or click quick-action chips below.
+  New: Try 'snake' or 'pong' to play retro ASCII games inside the CRT!
 ================================================================================
 `,
     });
-    // Trigger initial neofetch automatically for instant visual impact
     setTimeout(async () => {
       const res = await executeCommand('neofetch');
       addOutput({
@@ -65,13 +108,12 @@ export function Terminal() {
         content: res.content,
       });
     }, 150);
-  }, [addOutput, setBooting]);
+  }, [addOutput, setBooting, setHasBooted]);
 
   const handleCommandSubmit = useCallback(async () => {
     const raw = input.trim();
     sound.playEnter();
 
-    // Echo prompt into output
     const promptPath = cwd === '/home/rithik' ? '~' : cwd.replace('/home/rithik', '~');
     addOutput({
       type: 'input',
@@ -95,7 +137,8 @@ export function Terminal() {
   }, [input, cwd, addOutput, recordCommand]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Sound on every keypress except modifier keys
+    if (activeGame) return;
+
     if (!['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) {
       sound.playKeypress();
     }
@@ -161,12 +204,52 @@ export function Terminal() {
     sound.playKeypress();
   };
 
+  const cycleSwitchProfile = () => {
+    const profiles: SwitchProfile[] = ['blue', 'model-m', 'red', 'teletype'];
+    const next = profiles[(profiles.indexOf(switchProfile) + 1) % profiles.length];
+    setSwitchProfile(next);
+  };
+
   const promptPath = cwd === '/home/rithik' ? '~' : cwd.replace('/home/rithik', '~');
+
+  // CRT Screen Power-Off State
+  if (powerAnim === 'off') {
+    return (
+      <div className="relative flex flex-col h-full w-full bg-[#050505] text-term-dim font-mono border border-term-border/40 rounded-lg shadow-2xl items-center justify-center crt-curved-frame select-none overflow-hidden">
+        {/* CRT Scanline */}
+        <div className="crt-overlay opacity-30" />
+
+        <div className="text-center space-y-3 z-10 p-6">
+          <div className="w-12 h-12 rounded-full border border-term-border/60 bg-black/60 flex items-center justify-center mx-auto text-term-dim animate-pulse">
+            <Power className="w-6 h-6" />
+          </div>
+          <div className="text-sm font-bold tracking-widest text-term-dim">CRT PHOSPHOR DISPLAY OFF</div>
+          <p className="text-xs text-term-dim/70 max-w-xs">
+            Power collapsed. High-voltage flyback transformer discharged.
+          </p>
+          <button
+            onClick={togglePower}
+            className="px-4 py-1.5 bg-term-subtle hover:bg-term-text hover:text-black border border-term-border text-term-text rounded text-xs font-bold transition-all uppercase tracking-wider flex items-center gap-2 mx-auto shadow-md"
+          >
+            <Power className="w-3.5 h-3.5" />
+            Power On CRT
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const animClass =
+    powerAnim === 'collapsing'
+      ? 'animate-crt-off pointer-events-none'
+      : powerAnim === 'powering-up'
+      ? 'animate-crt-on'
+      : '';
 
   return (
     <div
       onClick={handleContainerClick}
-      className="relative flex flex-col h-full w-full bg-[#0a0800]/95 text-term-text font-mono border border-term-border rounded-lg shadow-2xl overflow-hidden crt-curved-frame backdrop-blur-md"
+      className={`relative flex flex-col h-full w-full bg-[#0a0800]/95 text-term-text font-mono border border-term-border rounded-lg shadow-2xl overflow-hidden crt-curved-frame backdrop-blur-md ${animClass}`}
     >
       {/* CRT Scanline and Vignette overlay */}
       <div className="crt-overlay" />
@@ -181,11 +264,24 @@ export function Terminal() {
           </div>
           <span className="ml-2 font-bold tracking-wider text-term-accent flex items-center gap-1.5">
             <TerminalIcon className="w-3.5 h-3.5" />
-            rithik@portfolio: {promptPath} (bash)
+            rithik@portfolio: {promptPath} {activeGame ? `[GAME: ${activeGame.toUpperCase()}]` : '(bash)'}
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Switch Sound Profile Toggle */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              cycleSwitchProfile();
+            }}
+            title={`Switch Profile: ${switchProfile.toUpperCase()} (Click to change: Blue, Model M, Red, Teletype)`}
+            className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] hover:bg-term-subtle transition-colors border border-term-border/40 text-term-dim hover:text-term-accent"
+          >
+            <Sliders className="w-3 h-3 text-term-accent" />
+            <span className="uppercase font-semibold">{switchProfile}</span>
+          </button>
+
           {/* Sound toggle button */}
           <button
             onClick={(e) => {
@@ -211,6 +307,18 @@ export function Terminal() {
             <span className="uppercase font-semibold">{theme}</span>
           </button>
 
+          {/* Power off button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePower();
+            }}
+            title="Power Off CRT Monitor"
+            className="p-1 rounded hover:bg-red-500/20 text-term-dim hover:text-red-400 transition-colors"
+          >
+            <Power className="w-3.5 h-3.5" />
+          </button>
+
           {/* GUI View Toggle */}
           <button
             onClick={(e) => {
@@ -230,13 +338,17 @@ export function Terminal() {
         </div>
       </div>
 
-      {/* Terminal Screen Body */}
+      {/* Terminal Screen Body or Active Game */}
       <div
         ref={scrollRef}
         className="relative z-10 flex-1 p-3.5 sm:p-4 overflow-y-auto space-y-2 text-xs sm:text-sm font-mono leading-relaxed"
       >
         {!hasBooted ? (
           <BootSequence onComplete={handleBootComplete} />
+        ) : activeGame === 'snake' ? (
+          <SnakeGame />
+        ) : activeGame === 'pong' ? (
+          <PongGame />
         ) : (
           <>
             {/* Output History */}
@@ -313,8 +425,8 @@ export function Terminal() {
         )}
       </div>
 
-      {/* Touch-Friendly Quick Command Chips (Mobile / Quick access) */}
-      {hasBooted && (
+      {/* Touch-Friendly Quick Command Chips */}
+      {hasBooted && !activeGame && (
         <div className="relative z-30 px-3 py-2 bg-black/80 border-t border-term-border/70 flex items-center gap-1.5 overflow-x-auto text-[11px] scrollbar-none">
           <span className="text-term-dim uppercase text-[10px] tracking-wider font-bold whitespace-nowrap flex items-center gap-1 mr-1">
             <Sparkles className="w-2.5 h-2.5" /> Quick:
@@ -325,6 +437,8 @@ export function Terminal() {
             { label: 'projects', cmd: 'cd projects' },
             { label: 'skills', cmd: 'cd skills' },
             { label: 'resume', cmd: 'open resume' },
+            { label: 'snake', cmd: 'snake' },
+            { label: 'pong', cmd: 'pong' },
             { label: 'contact', cmd: 'cd contact' },
             { label: 'help', cmd: 'help' },
             { label: 'sudo hire-me', cmd: 'sudo hire-me' },

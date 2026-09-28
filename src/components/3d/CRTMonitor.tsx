@@ -10,6 +10,8 @@ export function CRTMonitor() {
   const groupRef = useRef<THREE.Group>(null);
   const monitorRef = useRef<THREE.Group>(null);
   const viewMode = useTerminalStore((s) => s.viewMode);
+  const isPoweredOn = useTerminalStore((s) => s.isPoweredOn);
+  const togglePower = useTerminalStore((s) => s.togglePower);
 
   useFrame(({ clock, pointer }) => {
     if (!monitorRef.current) return;
@@ -39,6 +41,16 @@ export function CRTMonitor() {
             />
           </mesh>
 
+          {/* Top Cooling Ventilation Slots */}
+          <group position={[0, 1.705, -0.2]}>
+            {[-1.6, -1.2, -0.8, -0.4, 0, 0.4, 0.8, 1.2, 1.6].map((x, i) => (
+              <mesh key={i} position={[x, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <boxGeometry args={[0.22, 0.65, 0.02]} />
+                <meshStandardMaterial color="#080705" roughness={0.9} metalness={0.1} />
+              </mesh>
+            ))}
+          </group>
+
           {/* Front Bezel Lip */}
           <mesh position={[0, 0, 0.35]}>
             <boxGeometry args={[4.6, 3.2, 0.1]} />
@@ -49,15 +61,24 @@ export function CRTMonitor() {
             />
           </mesh>
 
-          {/* Recessed CRT Screen Glass */}
+          {/* Recessed CRT Screen Glass — Reacts to Power State */}
           <mesh position={[0, 0, 0.41]}>
             <planeGeometry args={[4.2, 2.8]} />
             <meshStandardMaterial
-              color="#000000"
-              roughness={0.1}
-              metalness={0.9}
-              emissive="#1a1100"
-              emissiveIntensity={0.15}
+              color="#020202"
+              roughness={0.15}
+              metalness={0.85}
+              emissive={isPoweredOn ? '#241400' : '#000000'}
+              emissiveIntensity={isPoweredOn ? 0.22 : 0.0}
+            />
+          </mesh>
+
+          {/* Model Decal on Left Bezel */}
+          <mesh position={[-1.4, -1.5, 0.41]}>
+            <planeGeometry args={[1.0, 0.08]} />
+            <meshStandardMaterial
+              color="#2a2520"
+              roughness={0.8}
             />
           </mesh>
 
@@ -65,11 +86,74 @@ export function CRTMonitor() {
           <mesh position={[0, -1.5, 0.41]}>
             <planeGeometry args={[0.8, 0.12]} />
             <meshStandardMaterial
-              color="#ffb000"
-              emissive="#ffb000"
-              emissiveIntensity={0.3}
+              color={isPoweredOn ? '#ffb000' : '#554000'}
+              emissive={isPoweredOn ? '#ffb000' : '#221500'}
+              emissiveIntensity={isPoweredOn ? 0.4 : 0.05}
             />
           </mesh>
+
+          {/* Retro Dial Knobs on Bezel */}
+          <mesh position={[0.9, -1.5, 0.43]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.055, 0.055, 0.05, 16]} />
+            <meshStandardMaterial color="#2a2622" roughness={0.5} metalness={0.6} />
+          </mesh>
+          <mesh position={[1.2, -1.5, 0.43]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.055, 0.055, 0.05, 16]} />
+            <meshStandardMaterial color="#2a2622" roughness={0.5} metalness={0.6} />
+          </mesh>
+
+          {/* CRT Status LED Indicator */}
+          <group position={[1.55, -1.5, 0.42]}>
+            <mesh>
+              <sphereGeometry args={[0.045, 16, 16]} />
+              <meshStandardMaterial
+                color={isPoweredOn ? '#00ff41' : '#ff2222'}
+                emissive={isPoweredOn ? '#00ff41' : '#ff1111'}
+                emissiveIntensity={isPoweredOn ? 3.0 : 0.8}
+                roughness={0.2}
+              />
+            </mesh>
+            <pointLight
+              color={isPoweredOn ? '#00ff41' : '#ff2222'}
+              intensity={isPoweredOn ? 0.8 : 0.2}
+              distance={0.5}
+              position={[0, 0, 0.06]}
+            />
+          </group>
+
+          {/* Interactive 3D Bezel Power Push-Button */}
+          <group
+            position={[1.92, -1.5, 0.41]}
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePower();
+            }}
+            onPointerOver={(e) => {
+              e.stopPropagation();
+              document.body.style.cursor = 'pointer';
+            }}
+            onPointerOut={(e) => {
+              e.stopPropagation();
+              document.body.style.cursor = 'auto';
+            }}
+          >
+            {/* Button Housing Frame */}
+            <mesh position={[0, 0, 0]}>
+              <boxGeometry args={[0.22, 0.22, 0.04]} />
+              <meshStandardMaterial color="#0c0b09" roughness={0.7} metalness={0.3} />
+            </mesh>
+            {/* Push-Button Rocker */}
+            <mesh position={[0, 0, isPoweredOn ? 0.025 : 0.015]}>
+              <boxGeometry args={[0.16, 0.16, 0.04]} />
+              <meshStandardMaterial
+                color={isPoweredOn ? '#3a3228' : '#221e1a'}
+                emissive={isPoweredOn ? '#ffb000' : '#000000'}
+                emissiveIntensity={isPoweredOn ? 0.15 : 0.0}
+                roughness={0.4}
+                metalness={0.5}
+              />
+            </mesh>
+          </group>
 
           {/* Monitor Neck */}
           <mesh position={[0, -1.9, -0.2]}>
