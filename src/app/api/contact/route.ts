@@ -1,5 +1,22 @@
 import { NextResponse } from 'next/server';
 
+export async function GET() {
+  return NextResponse.json({
+    status: 'online',
+    endpoint: '/api/contact',
+    method: 'POST',
+    description: 'Rithik Agrawal Terminal Portfolio — Contact Transmission Gateway',
+    usage: {
+      headers: { 'Content-Type': 'application/json' },
+      body: {
+        name: 'Recruiter or Visitor Name',
+        email: 'visitor@company.com',
+        message: 'Message content'
+      }
+    }
+  });
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
